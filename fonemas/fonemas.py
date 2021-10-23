@@ -43,7 +43,11 @@ def transcribe(palabra):
     silabas = silabas_des.silabas
     silabas[silabas_des.tonica] = f"'{silabas[silabas_des.tonica]}"
 
+    print(silabas)
+
     for idx, silaba in enumerate(silabas):
+        if 'gü' in silaba:
+            silaba = silaba.replace('gü', 'gw')
         if re.search('[aeiouáéíóú]{2,}', silaba):
             silaba = re.sub(r'([aeiouáééó])i', rf'\1j', silaba)
             silaba = re.sub(r'([aeiouáééó])u', rf'\1w', silaba)
