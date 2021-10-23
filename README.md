@@ -11,7 +11,7 @@
 
 This library is part of the research project [Sound and Meaning in Spanish Golden Age Literature](https://soundandmeaning.univie.ac.at/). Automatic verse scansion required identifying phonologic features that can be used using this library.
 
-## Instalation
+## Installation
 
 ```bash
 pip3 install fonemas
