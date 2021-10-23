@@ -25,7 +25,7 @@ The library provides the function *transcribe()*. The function takes a Spanish w
 ```python
 >>> from fonemas import transcribe
 >>> transcribe('Averigüéis')
-['a', 'be', 'ɾi', "'guejs"]
+['a', 'be', 'ɾi', "'gwejs"]
 ```
 
 ## Description
