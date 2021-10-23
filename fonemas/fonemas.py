@@ -1,125 +1,58 @@
-#!/usr/bin/env python3 import re
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import re
+import silabeador
 
 
-def silabea(word):
-    return silabas(word).silabas
+consonantes = {'w': 'b', 'v': 'b', 'z': 'θ', 'x': 'ks', 'j': 'x', 'ch':'tʃ',
+               'ñ': 'ɲ', 'h':'', 'y': 'j'}
+dobles = {'qu': 'k', 'll': 'ʎ', 'ch':'tʃ',  'r': 'ɾ', 'ɾɾ': 'r',
+          'sɾ': 'sr', 'lɾ': 'lr', 'nɾ': 'nr',
+          'ce': 'θe', 'cé': 'θe', 'cë': 'θe',
+          'ci': 'θi', 'cí': 'θi', 'cï': 'θ', 'c': 'k'}
+diacriticos = {'á': 'a', 'à': 'a', 'ä': 'a',
+               'é': 'e', 'è': 'e', 'ë': 'e',
+               'í': 'i', 'ì': 'i', 'ï': 'i',
+               'ó': 'o', 'ò': 'o', 'ö': 'o',
+               'ú': 'u', 'ù': 'u', 'ü': 'u'}
 
 
-def tonica(word):
-    return silabas(word).tonica
 
 
-def tonica_s(slbs):
-    if len(slbs) == 1:
-        tonica = -1
-    elif len(slbs) > 2 and any(k in 'áéíóúÁÉÍÓÚ' for k in slbs[-3]):
-        tonica = -3
-    else:
-        if any(k in 'áéíóúÁÉÍÓÚ' for k in slbs[-2]):
-            tonica = -2
-        elif any(k in 'áéíóúÁÉÍÓÚ' for k in slbs[-1]):
-            tonica = -1
-        else:
-            if (slbs[-1][-1] in 'nsNS' or
-                    slbs[-1][-1] in 'aeiouAEIOU'):
-                tonica = -2
-            else:
-                tonica = -1
-    return tonica
+def transcribe(palabra):
+    palabra = palabra.lower()
+    for unica in consonantes:
+        if unica in palabra:
+            palabra = palabra.replace(unica, consonantes[unica])
+    for doble in dobles:
+        if doble in palabra:
+            palabra = palabra.replace(doble, dobles[doble])
+    if palabra.startswith('ɾ'):
+        palabra = re.sub('^ɾ', 'r', palabra)
+    #if re.search('[nls]ɾ', palabra):
+    #    re.sub('([nls])ɾ','\1r', palabra)
+    if 'g' in palabra:
+        for reg in [[r'g([eiEIéíÉÍËÏëï])', rf'x\1'],
+                    [r'g[uU]([eiEIéíÉÍËÏëï])', rf'g\1']]:
+            palabra = re.sub(reg[0], reg[1], palabra)
+    if 'c' in palabra:
+        for reg in [[r'c([eiEIéíÉÍËÏëï])', rf'θ\1'],
+                    [r'c([aouAOUÁÓÚáóúäöüÄÖÜ])', rf'k\1']]:
+            palabra = re.sub(reg[0], reg[1], palabra)
+    silabas_des =  silabeador.silabas(palabra)
+    silabas = silabas_des.silabas
+    silabas[silabas_des.tonica] = f"'{silabas[silabas_des.tonica]}"
 
+    for idx, silaba in enumerate(silabas):
+        if re.search('[aeiouáéíóú]{2,}', silaba):
+            silaba = re.sub(r'([aeiouáééó])i', rf'\1j', silaba)
+            silaba = re.sub(r'([aeiouáééó])u', rf'\1w', silaba)
+        if re.search('[ui][aeiouáééiíóú]', silaba):
+            silaba = re.sub(r'i([aeouáééiíóú])', rf'j\1', silaba)
+            silaba = re.sub(r'u([aeioáééiíóú])', rf'w\1', silaba)
+        for letra in diacriticos:
+            if letra in silaba:
+                silaba = silaba.replace(letra, diacriticos[letra])
+        silabas[idx] = silaba
+    return silabas
 
-class silabas:
-    vocales = ['a', 'e', 'i', 'o', 'u',
-               'á', 'é', 'í', 'ó', 'ú',
-               'ä', 'ë', 'ï', 'ö', 'ü']
-
-    def __init__(self, palabra):
-        self.palabra = palabra
-        self.silabas = self.__silabea(self.palabra)
-        self.tonica = tonica_s(self.silabas)
-
-    def __silabea(self, letras):
-        extranjeras = {'à': 'a', 'è': 'e', 'ì': 'i', 'ò': 'o', 'ù': 'u',
-                       'ã': 'a', 'ẽ': 'e', 'ĩ': 'i', 'õ': 'o', 'ũ': 'u',
-                       'ﬁ': 'fi', 'ﬂ': 'fl'}
-        diccionario = {'b': 'be', 'c': 'ce', 'd': 'de', 'f': 'efe', 'g': 'ge',
-                       'h': 'hache', 'j': 'jota', 'k': 'ka', 'l': 'ele',
-                       'm': 'eme', 'n': 'ene', 'p': 'pe', 'q': 'qu',
-                       'r': 'erre', 's': 'ese', 't': 'te', 'v': 'uve',
-                       'w': 'uvedoble', 'x': 'equis',
-                       'z': 'zeta', 'ph': 'pehache'}
-        slbs = []
-        palabra = re.sub(r'\W', '', letras)
-        palabra = ''.join([letra if letra not in extranjeras
-                           else extranjeras[letra] for letra in letras])
-        if palabra.lower() in diccionario:
-            palabra = diccionario[palabra]
-        slbs[:0] = palabra
-        slbs = self.__une(slbs)
-        slbs = self.__separa(slbs)
-        return slbs
-
-    def __une(self, letras):
-        cerradas = ['i', 'u']
-        debiles = ['e', 'i', 'é', 'í']
-        hiatos = ['ú', 'í']
-        dieresis = ['ä', 'ë', 'ï', 'ö', 'ü']
-        lista = []
-        for letra in letras:
-            if len(lista) == 0:
-                lista = [letra]
-            elif (letra.lower() in self.vocales and
-                  lista[-1][-1].lower() in self.vocales) and (
-                      (not any(y.lower() in hiatos
-                               for y in (lista[-1][-1], letra)) and
-                       any(y.lower() in cerradas for y in
-                           (lista[-1][-1], letra)) and
-                       not any(y.lower() in dieresis for
-                               y in (lista[-1][-1], letra))) or
-                      (letra in debiles and
-                          ''.join(lista).lower().endswith('gü'))) or (
-                                  ''.join(lista).lower().endswith('qu')):
-                lista[-1] = lista[-1] + letra
-            else:
-                lista = lista + [letra]
-        return lista
-
-    def __separa(self, letras):
-        inseparables_onset = ['pl', 'bl', 'fl', 'cl', 'kl', 'gl', 'll',
-                              'pr', 'br', 'fr', 'cr', 'kr', 'gr', 'rr',
-                              'tr', 'ch']
-        inseparables_coda = ['ns', 'bs']
-        lista = []
-        onset = ''
-        if len(letras) == 1:
-            lista = letras
-        else:
-            for letra in letras:
-                if all(x.lower() not in self.vocales for x in letra):
-                    if len(lista) == 0:
-                        onset = onset + letra
-                    else:
-                        onset = onset + letra
-                        media = len(onset) // 2
-                elif len(onset) <= 1 or len(lista) == 0:
-                    lista = lista + [onset+letra]
-                    onset = ''
-                elif any(onset.endswith(x) for x in inseparables_onset):
-                    if len(lista) > 0:
-                        lista[-1] = lista[-1] + onset[:-2]
-                        lista = lista + [onset[-2:] + letra]
-                    else:
-                        lista = lista + [onset + letra]
-                    onset = ''
-                elif any(onset.startswith(x) for x in inseparables_coda) and (
-                        len(onset) > 2):
-                    lista[-1] = lista[-1] + onset[:2]
-                    lista = lista + [onset[2:] + letra]
-                    onset = ''
-                else:
-                    lista[-1] = lista[-1] + onset[:media]
-                    lista = lista + [onset[media:] + letra]
-                    onset = ''
-            lista[-1] = lista[-1] + onset
-        return lista
