@@ -13,7 +13,7 @@ install_requires = ['silabeador']
 # This call to setup() does all the work
 setup(
     name="fonemas",
-    version="1.0.0-1",
+    version="1.0.0-2",
     python_requires='>=3.5',
     description="Phonologic transcription of Spanish",
     long_description=README,
@@ -40,7 +40,7 @@ setup(
     include_package_data=True,
     entry_points={
         "console_scripts": [
-            "silabeador=silabeador.__main__:main",
+            "fonemas=fonemas.__main__:main",
         ]
     },
 )
