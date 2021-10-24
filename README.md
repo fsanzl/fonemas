@@ -40,7 +40,7 @@ Feel free to contribute using the [GitHub Issue Tracker](https://github.com/fsan
 
 ## Licence
 
-This project is under GNU LGPL 2.1 See [LICENSE](https://github.com/fsanzl/fonemas/LICENSE) for details.
+This project is under GNU LGPL 2.1. See [LICENCE](https://github.com/fsanzl/fonemas/LICENCE) for details.
 
 ## References
 
