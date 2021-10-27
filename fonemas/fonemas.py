@@ -5,7 +5,7 @@ import silabeador
 
 
 consonantes = {'w': 'b', 'v': 'b', 'z': 'θ', 'x': 'ks', 'j': 'x', 'ch':'tʃ',
-               'ñ': 'ɲ', 'h':'', 'y': 'j'}
+               'ñ': 'ɲ', 'y': 'j'}
 dobles = {'qu': 'k', 'll': 'ʎ', 'ch':'tʃ',  'r': 'ɾ', 'ɾɾ': 'r',
           'sɾ': 'sr', 'lɾ': 'lr', 'nɾ': 'nr',
           'ce': 'θe', 'cé': 'θe', 'cë': 'θe',
@@ -42,8 +42,9 @@ def transcribe(palabra):
     silabas_des =  silabeador.silabas(palabra)
     silabas = silabas_des.silabas
     silabas[silabas_des.tonica] = f"'{silabas[silabas_des.tonica]}"
+    if any('h' in silaba for silaba in silabas):
+        silabas = [silaba.replace('h', '') for silaba in silabas]
 
-    print(silabas)
 
     for idx, silaba in enumerate(silabas):
         if 'gü' in silaba:
