@@ -6,10 +6,11 @@ import silabeador
 
 consonantes = {'w': 'b', 'v': 'b', 'z': 'θ', 'x': 'ks', 'j': 'x', 'ch':'tʃ',
                'ñ': 'ɲ', 'y': 'j',
-               'qu': 'k', 'll': 'ʎ', 'ch':'tʃ',  'r': 'ɾ', 'ɾɾ': 'r',
-          'sɾ': 'sr', 'lɾ': 'lr', 'nɾ': 'nr',
-          'ce': 'θe', 'cé': 'θe', 'cë': 'θe',
-               'ci': 'θi', 'cí': 'θi', 'cï': 'θ', 'c': 'k', 'h':''}
+               'qu': 'k', 'll': 'ʎ', 'ch':'tʃ', 'r': 'ɾ', 'ɾɾ': 'r',
+               'sɾ': 'sr', 'lɾ': 'lr', 'nɾ': 'nr',
+               'ce': 'θe', 'cé': 'θe', 'cë': 'θe',
+               'ci': 'θi', 'cí': 'θi', 'cï': 'θi', 'cj': 'θi',
+               'c': 'k', 'h':''}
 diacriticos = {'á': 'a', 'à': 'a', 'ä': 'a',
                'é': 'e', 'è': 'e', 'ë': 'e',
                'í': 'i', 'ì': 'i', 'ï': 'i',
@@ -20,26 +21,18 @@ diacriticos = {'á': 'a', 'à': 'a', 'ä': 'a',
 
 
 def transcribe(palabra):
+    print(palabra)
     palabra = palabra.lower()
     silabas_des = silabeador.silabas(palabra)
     silabas = silabas_des.silabas
     for idx, silaba in enumerate(silabas):
         for letras in consonantes:
             if letras in silaba:
-                silabas[idx]  = silaba.replace(letras, consonantes[letras])
-    if palabra[0].startswith('ɾ'):
-        palabra[0] = re.sub('^ɾ', 'r', palabra[0])
-    if 'g' in palabra:
-        for reg in [[r'g([eiéíiëï])', rf'x\1'],
-                    [r'g[u]([eiéíëï])', rf'g\1']]:
-            palabra = re.sub(reg[0], reg[1], palabra)
-    silabas_des =  silabeador.silabas(palabra)
-    silabas[silabas_des.tonica] = f"'{silabas[silabas_des.tonica]}"
-    if any('h' in silaba for silaba in silabas):
-        silabas = [silaba.replace('h', '') for silaba in silabas]
-
-
-    for idx, silaba in enumerate(silabas):
+                silaba  = silaba.replace(letras, consonantes[letras])
+        if 'g' in silaba:
+            for reg in [[r'g([eiéíiëï])', rf'x\1'],
+                        [r'g[u]([eiéíëï])', rf'g\1']]:
+                silaba = re.sub(reg[0], reg[1], silaba)
         if 'gü' in silaba:
             silaba = silaba.replace('gü', 'gw')
         if re.search('[aeiouáéíóú]{2,}', silaba):
@@ -52,5 +45,8 @@ def transcribe(palabra):
             if letra in silaba:
                 silaba = silaba.replace(letra, diacriticos[letra])
         silabas[idx] = silaba
+    if silabas[0].startswith('ɾ'):
+        silabas[0] = re.sub('^ɾ', 'r', silabas[0])
+    silabas[silabas_des.tonica] = f"'{silabas[silabas_des.tonica]}"
     return silabas
 
