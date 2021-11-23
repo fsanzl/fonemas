@@ -5,7 +5,7 @@ import silabeador
 
 
 consonantes = {'w': 'b', 'v': 'b', 'z': 'θ', 'x': 'ks', 'j': 'x', 'ch':'tʃ',
-               'ñ': 'ɲ', 'y': 'j',
+               'ñ': 'ɲ',
                'qu': 'k', 'll': 'ʎ', 'ch':'tʃ', 'r': 'ɾ', 'ɾɾ': 'r',
                'sɾ': 'sr', 'lɾ': 'lr', 'nɾ': 'nr',
                'ce': 'θe', 'cé': 'θe', 'cë': 'θe',
@@ -26,6 +26,8 @@ def transcribe(palabra):
     silabas_des = silabeador.silabas(palabra)
     silabas = silabas_des.silabas
     for idx, silaba in enumerate(silabas):
+        if silaba == 'y':
+            silaba = 'i'
         for letras in consonantes:
             if letras in silaba:
                 silaba  = silaba.replace(letras, consonantes[letras])
