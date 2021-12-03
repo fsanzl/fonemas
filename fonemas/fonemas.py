@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import re
 import silabeador
@@ -25,8 +25,8 @@ def transcribe(palabra):
     silabas_des = silabeador.silabas(palabra)
     silabas = silabas_des.silabas
     for idx, silaba in enumerate(silabas):
-        if silaba == 'y':
-            silaba = 'i'
+        if silaba.endswith('y'):
+            silaba = silaba.replace('y','i')
         for letras in consonantes:
             if letras in silaba:
                 silaba  = silaba.replace(letras, consonantes[letras])
