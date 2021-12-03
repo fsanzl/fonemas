@@ -21,7 +21,6 @@ diacriticos = {'á': 'a', 'à': 'a', 'ä': 'a',
 
 
 def transcribe(palabra):
-    print(palabra)
     palabra = palabra.lower()
     silabas_des = silabeador.silabas(palabra)
     silabas = silabas_des.silabas
