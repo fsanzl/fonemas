@@ -11,6 +11,7 @@ consonantes = {'w': 'b', 'v': 'b', 'z': 'θ', 'x': 'ks', 'j': 'x', 'ch':'tʃ',
                'ce': 'θe', 'cé': 'θe', 'cë': 'θe',
                'ci': 'θi', 'cí': 'θi', 'cï': 'θi', 'cj': 'θi',
                'c': 'k', 'h':''}
+alofonos    = {'nv': 'mb', 'nf': 'mf'}
 diacriticos = {'á': 'a', 'à': 'a', 'ä': 'a',
                'é': 'e', 'è': 'e', 'ë': 'e',
                'í': 'i', 'ì': 'i', 'ï': 'i',
@@ -22,6 +23,8 @@ diacriticos = {'á': 'a', 'à': 'a', 'ä': 'a',
 
 def transcribe(palabra):
     palabra = palabra.lower()
+    for alofono in alofonos:
+        palabra = palabra.replace(alofono, alofonos[alofono])
     silabas_des = silabeador.silabas(palabra)
     silabas = silabas_des.silabas
     for idx, silaba in enumerate(silabas):
