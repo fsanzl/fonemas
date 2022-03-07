@@ -11,7 +11,7 @@ consonantes = {'w': 'b', 'v': 'b', 'z': 'θ', 'x': 'ks', 'j': 'x', 'ch':'tʃ',
                'ce': 'θe', 'cé': 'θe', 'cë': 'θe',
                'ci': 'θi', 'cí': 'θi', 'cï': 'θi', 'cj': 'θi',
                'c': 'k', 'h':''}
-alofonos    = {'nv': 'mb', 'nf': 'mf'}
+alofonos    = {'nv': 'mb', 'nf': 'mf', 'nr': 'nrr', 'lr': 'lrr'}
 diacriticos = {'á': 'a', 'à': 'a', 'ä': 'a',
                'é': 'e', 'è': 'e', 'ë': 'e',
                'í': 'i', 'ì': 'i', 'ï': 'i',
