@@ -30,6 +30,8 @@ def transcribe(palabra):
     for idx, silaba in enumerate(silabas):
         if silaba.endswith('y'):
             silaba = silaba.replace('y','i')
+        if len(silaba) > 1 and silaba.startswith('y'):
+            silaba = silaba.replace('y', 'ʝ')
         for letras in consonantes:
             if letras in silaba:
                 silaba  = silaba.replace(letras, consonantes[letras])
