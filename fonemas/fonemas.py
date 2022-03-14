@@ -4,55 +4,212 @@ import re
 import silabeador
 
 
-consonantes = {'w': 'b', 'v': 'b', 'z': 'θ', 'x': 'ks', 'j': 'x', 'ch':'tʃ',
-               'ñ': 'ɲ',
-               'qu': 'k', 'll': 'ʎ', 'ch':'tʃ', 'r': 'ɾ', 'ɾɾ': 'r',
-               'sɾ': 'sr', 'lɾ': 'lr', 'nɾ': 'nr',
-               'ce': 'θe', 'cé': 'θe', 'cë': 'θe',
-               'ci': 'θi', 'cí': 'θi', 'cï': 'θi', 'cj': 'θi',
-               'c': 'k', 'h':''}
-alofonos    = {'nv': 'mb', 'nf': 'mf', 'nr': 'nrr', 'lr': 'lrr'}
-diacriticos = {'á': 'a', 'à': 'a', 'ä': 'a',
-               'é': 'e', 'è': 'e', 'ë': 'e',
-               'í': 'i', 'ì': 'i', 'ï': 'i',
-               'ó': 'o', 'ò': 'o', 'ö': 'o',
-               'ú': 'u', 'ù': 'u', 'ü': 'u'}
+class transcription:
+    def __init__(self, sentence):
+        self.sentence = self.__letters(sentence.lower())
+        self.phonology = self.transcription_fnl(self.sentence)
+        self.phonetics = self.transcription_fnt(
+            ' '.join(self.phonology['sentence']))
+        self.ascii = self.ipa2ascii(self.phonetics)
+
+    def ipa2ascii(self, sentence):
+        words = ' '.join(sentence['sentence'])
+        syllables = ' '.join(sentence['syllables'])
+        translation = {'a': 'a', 'e': 'e', 'i': 'i', 'o': 'o', 'u': 'u',
+                       'j': 'j', 'w': 'w',
+                       'b': 'b', 'β': 'B', 'd': 'd', 'ð': 'D',
+                       'g': 'g', 'ɣ': 'G',
+                       'p': 'p', 't': 't', 'k': 'k',
+                       'l': 'l', 'ʎ': 'L', 'r': 'R', 'ɾ': 'R',
+                       'm': 'm', 'ɱ': 'M', 'n': 'n', 'ŋ': 'N', 'ɲ': '9',
+                       'tʃ': 'X', 'ʝ': 'y', 'x': 'x', 'χ': '4',
+                       'f': 'f', 's': 's', 'z': 'z', 'θ': 'Z'}
+        for phoneme in translation:
+            words = words.replace(phoneme, translation[phoneme])
+            syllables = syllables.replace(phoneme, translation[phoneme])
+        return {'sentence': words, 'syllables': syllables}
+
+    @staticmethod
+    def clean(sentence):
+        symbols = ['(', ')', '—', '…', ',', ';', ':', '?', '!', "'",
+                   '«', '»', '–', '—', '“', '”', '‘', '’', '"', '-', '(', ')']
+        letters =  {'õ': 'o', 'æ': 'ae',
+                   'à': 'a', 'è': 'e', 'ì': 'i', 'ò': 'o', 'ù': 'u'}
+        for x in symbols:
+            if x in sentence:
+                sentence = sentence.replace(x, '')
+        for x in letters:
+            if x in sentence:
+                sentence = sentence.replace(x, letters[x])
+        return sentence
 
 
 
 
-def transcribe(palabra):
-    palabra = palabra.lower()
-    for alofono in alofonos:
-        palabra = palabra.replace(alofono, alofonos[alofono])
-    silabas_des = silabeador.silabas(palabra)
-    silabas = silabas_des.silabas
-    for idx, silaba in enumerate(silabas):
-        if silaba.endswith('y'):
-            silaba = silaba.replace('y','i')
-        if len(silaba) > 1 and silaba.startswith('y'):
-            silaba = silaba.replace('y', 'ʝ')
-        for letras in consonantes:
-            if letras in silaba:
-                silaba  = silaba.replace(letras, consonantes[letras])
-        if 'g' in silaba:
-            for reg in [[r'g([eiéíiëï])', rf'x\1'],
-                        [r'g[u]([eiéíëï])', rf'g\1']]:
-                silaba = re.sub(reg[0], reg[1], silaba)
-        if 'gü' in silaba:
-            silaba = silaba.replace('gü', 'gw')
-        if re.search('[aeiouáéíóú]{2,}', silaba):
-            silaba = re.sub(r'([aeiouáééó])i', rf'\1j', silaba)
-            silaba = re.sub(r'([aeiouáééó])u', rf'\1w', silaba)
-        if re.search('[ui][aeiouáééiíóú]', silaba):
-            silaba = re.sub(r'i([aeouáééiíóú])', rf'j\1', silaba)
-            silaba = re.sub(r'u([aeioáééiíóú])', rf'w\1', silaba)
-        for letra in diacriticos:
-            if letra in silaba:
-                silaba = silaba.replace(letra, diacriticos[letra])
-        silabas[idx] = silaba
-    if silabas[0].startswith('ɾ'):
-        silabas[0] = re.sub('^ɾ', 'r', silabas[0])
-    silabas[silabas_des.tonica] = f"'{silabas[silabas_des.tonica]}"
-    return silabas
+    def __splitvariables(self, sentence):
+        stressed = {'':'','':'','':''}
+        syllabic = []
+        wordy = []
+        for word in sentence.split():
+            if len(word) > 5 and word.endswith('mente'):
+                syllabification = silabeador.silabas(word.strip('mente'))
+                syllables = syllabification.silabas + ['ˌmen', 'te']
+                stress = syllabification.tonica -2
+                word.replace('mente', 'ˌmente')
+            else:
+                syllabification = silabeador.silabas(word)
+                syllables = syllabification.silabas
+                stress = syllabification.tonica
+            conta = 0
+            print(word, syllables)
+            diph = self.__diphthongs(word, syllables)
+            word = diph['word']
+            syllables = diph['syllables']
+            syllables[stress] = f"'{syllables[stress]}"
+            for slb in syllables:
 
+                for char in slb:
+                    if char == "'":
+                        word = word[:conta] + "'" + word[conta:]
+                    else:
+                        conta += 1
+            for idx, syllable in enumerate(syllables):
+                if any(letter in 'AEIOU' for letter in syllable):
+                    word[idx] = f"'{syllable.lower()}"
+                for stress in stressed:
+                    syllable = syllable.replace(stress, stressed[stress])
+                syllabic += [syllable]
+            if len(syllables) == 1:
+                word = word.replace("'", '')
+            wordy += [word]
+        return {'sentence': wordy, 'syllables': syllabic}
+
+    @staticmethod
+    def __letters(sentence):
+        letters = {'b': 'be', 'c': 'ce', 'd': 'de', 'f': 'efe', 'g': 'ge',
+                   'h': 'hache', 'j': 'jota', 'k': 'ka', 'l': 'ele',
+                   'm': 'eme', 'n': 'ene', 'p': 'pe', 'q': 'ku',
+                   'r': 'erre', 's': 'ese', 't': 'te', 'v': 'ube',
+                   'w': 'ubedoble', 'x': 'ekis', 'z': 'ceta', 'ph': 'peache'}
+        for letter in letters:
+            sentence = re.sub(rf'\b{letter}\b', 'letters[letter]', sentence)
+        return sentence
+
+    def transcription_fnl(self, sentence):
+        diacritics = {'á': 'a', 'à': 'a', 'ä': 'a',
+                      'é': 'e', 'è': 'e', 'ë': 'e',
+                      'í': 'i', 'ì': 'i', 'ï': 'i',
+                      'ó': 'o', 'ò': 'o', 'ö': 'o',
+                      'ú': 'u', 'ù': 'u', 'ü': 'u'}
+
+        consonants = {'w': 'b', 'v': 'b', 'z': 'θ', 'x': 'ks', 'j': 'x',
+                      'ñ': 'ɲ', 'qu': 'k', 'll': 'ʎ', 'ch': 'tʃ',
+                      'r': 'ɾ', 'R': 'r',
+                      'ce': 'θe', 'cé': 'θe', 'cë': 'θë',
+                      'ci': 'θi', 'cí': 'θí', 'cï': 'θï', 'cj': 'θj',
+                      'c': 'k', 'ph': 'f', 'h': ''}
+        sentence = re.sub(r'(?:([nls])r|rr|\br)', r'\1R', sentence)
+        sentence = sentence.replace('r', 'ɾ')
+        for consonant in consonants:
+            if consonant in sentence:
+                sentence = sentence.replace(consonant, consonants[consonant])
+        if 'y' in sentence:
+            sentence = re.sub(r'y', 'ʝ', sentence)
+            sentence = re.sub(r'ʝ\b', 'i', sentence)
+        if 'g' in sentence:
+            for reg in [
+                [r'g([eiéíiëï])', rf'x\1'],
+                    [r'g[u]([eiéíëï])', rf'g\1']]:
+                sentence = re.sub(reg[0], reg[1], sentence)
+            if 'gü' in sentence:
+                sentence = sentence.replace('gü', 'gw')
+        transcription = self.__splitvariables(sentence)
+        words = transcription['sentence']
+        syllables = transcription['syllables']
+        for letter in diacritics:
+            words = [word.replace(letter,diacritics[letter]) for word in words]
+            syllables = [syllable.replace(letter,diacritics[letter]) for
+                         syllable in syllables]
+        return {'sentence': words, 'syllables': syllables}
+
+    def transcription_fnt(self, sentence):
+        sentence = sentence.replace(
+            'b', 'β').replace(
+            'd', 'ð').replace(
+            'g', 'ɣ')
+        sentence = re.sub(r'([mnɲ]|\b)β', r'\1b', sentence)
+        sentence = re.sub(r'([mnɲlʎ]|\b)ð', r'\1d', sentence)
+        sentence = re.sub(r'([mnɲ]|\b)ɣ', r'\1g', sentence)
+        sentence = re.sub(r'θ([bdgβðɣmnɲlʎrɾ])', r'ð\1', sentence)
+        sentence = re.sub(r's([bdgβðɣmnɲlʎrɾ])', r'z\1', sentence)
+        sentence = re.sub(r'f([bdgβðɣmnɲlʎrɾ])', r'v\1', sentence)
+        allophones = {'nb': 'mb', 'nf': 'ɱf',
+                      'nk': 'ŋk', 'ng': 'ŋg', 'nx': 'ŋx',
+                      'nθ': 'n̟θ',
+                      'lθ': 'l̟θ',
+                      'xu': 'χu', 'xi': 'χi',
+                      }
+        if any(allophone in sentence for allophone in allophones):
+            for allophone in allophones:
+                sentence = sentence.replace(allophone, allophones[allophone])
+        transcription = self.__splitvariables(sentence)
+        return {'sentence': transcription['sentence'],
+                'syllables': transcription['syllables']}
+
+    @staticmethod
+    def __replace_ocurrence(string, origin, to, num):
+        strange_char = '$&$@$$&'
+        if string.count(origin) < 0:
+            return string
+        elif string.count(origin) > 1:
+            return string.replace(origin, strange_char, num).replace(
+                strange_char, origin, num-1).replace(to, strange_char, 1)
+        else:
+            return string.replace(origin, to)
+
+    def __diphthongs(self, word, syllables):
+        i = 0
+        j = 0
+        for idx, syllable in enumerate(syllables):
+            if re.search('[aeiouáéíóú]{2,}', syllable):
+                i += 1
+                syllable = re.sub(r'([aeiouáééó])i', rf'\1j', syllable)
+                syllable = re.sub(r'([aeiouáééó])u', rf'\1w', syllable)
+                word = self.__replace_ocurrence(word,
+                                                syllables[idx],
+                                                syllable, i)
+
+            if re.search('[ui][aeiouáééiíóú]', syllable):
+                j += 1
+                syllable = re.sub(r'i([aeouáééiíóú])', rf'j\1', syllable)
+                syllable = re.sub(r'u([aeioáééiíóú])', rf'w\1', syllable)
+                word = self.__replace_ocurrence(word,
+                                                syllables[idx],
+                                                syllable, j)
+            syllables[idx] = syllable
+
+        return {'word': word, 'syllables': syllables}
+
+    def transcribe(frase):
+        frase = self.__letras(frase.lower())
+        t_fonologica = fonologica(frase)
+        t_fonetica = fonetica(t_fonologica)
+        print(t_fonologica)
+        print(t_fonetica)
+        silabas_des = silabeador.silabas(frase)
+        silabas = silabas_des.silabas
+        for idx, silaba in enumerate(silabas):
+            if re.search('[aeiouáéíóú]{2,}', silaba):
+                silaba = re.sub(r'([aeiouáééó])i', rf'\1j', silaba)
+                silaba = re.sub(r'([aeiouáééó])u', rf'\1w', silaba)
+            if re.search('[ui][aeiouáééiíóú]', silaba):
+                silaba = re.sub(r'i([aeouáééiíóú])', rf'j\1', silaba)
+                silaba = re.sub(r'u([aeioáééiíóú])', rf'w\1', silaba)
+            for letra in diacriticos:
+                if letra in silaba:
+                    silaba = silaba.replace(letra, diacriticos[letra])
+            silabas[idx] = silaba
+        if silabas[0].startswith('ɾ'):
+            silabas[0] = re.sub('^ɾ', 'r', silabas[0])
+        silabas[silabas_des.tonica] = f"'{silabas[silabas_des.tonica]}"
+        return silabas
