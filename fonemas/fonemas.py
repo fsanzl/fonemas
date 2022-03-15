@@ -5,11 +5,11 @@ import silabeador
 
 
 class transcription:
-    def __init__(self, sentence):
+    def __init__(self, sentence, mono=False):
         self.sentence = self.__letters(self.__clean(sentence.lower()))
-        self.phonology = self.transcription_fnl(self.sentence)
+        self.phonology = self.transcription_fnl(self.sentence, mono)
         self.phonetics = self.transcription_fnt(
-            ' '.join(self.phonology['sentence']))
+            ' '.join(self.phonology['sentence']), mono)
         self.ascii = self.ipa2ascii(self.phonetics)
 
     def ipa2ascii(self, sentence):
@@ -43,7 +43,7 @@ class transcription:
                 sentence = sentence.replace(x, letters[x])
         return sentence
 
-    def __splitvariables(self, sentence, ipa=False):
+    def __splitvariables(self, sentence, ipa, mono):
         stressed = {'': '', '': '', '': ''}
         syllabic = []
         wordy = []
@@ -70,7 +70,7 @@ class transcription:
                     else:
                         conta += 1
             for idx, syllable in enumerate(syllables):
-                if len(syllables) == 1:
+                if mono and len(syllables) == 1:
                     syllable = syllable.strip("'")
                 for stress in stressed:
                     syllable = syllable.replace(stress, stressed[stress])
@@ -91,7 +91,7 @@ class transcription:
             sentence = re.sub(rf'\b{letter}\b', 'letters[letter]', sentence)
         return sentence
 
-    def transcription_fnl(self, sentence):
+    def transcription_fnl(self, sentence, mono):
         diacritics = {'á': 'a', 'à': 'a', 'ä': 'a',
                       'é': 'e', 'è': 'e', 'ë': 'e',
                       'í': 'i', 'ì': 'i', 'ï': 'i',
@@ -119,7 +119,7 @@ class transcription:
                 sentence = re.sub(reg[0], reg[1], sentence)
             if 'gü' in sentence:
                 sentence = sentence.replace('gü', 'gw')
-        transcription = self.__splitvariables(sentence)
+        transcription = self.__splitvariables(sentence, False, mono)
         words = transcription['sentence']
         syllables = transcription['syllables']
         for letter in diacritics:
@@ -129,7 +129,7 @@ class transcription:
                          syllable in syllables]
         return {'sentence': words, 'syllables': syllables}
 
-    def transcription_fnt(self, sentence):
+    def transcription_fnt(self, sentence, mono):
         sentence = sentence.replace(
             'b', 'β').replace(
             'd', 'ð').replace(
@@ -147,7 +147,7 @@ class transcription:
         if any(allophone in sentence for allophone in allophones):
             for allophone in allophones:
                 sentence = sentence.replace(allophone, allophones[allophone])
-        transcription = self.__splitvariables(sentence, True)
+        transcription = self.__splitvariables(sentence, True, mono)
         return {'sentence': transcription['sentence'],
                 'syllables': transcription['syllables']}
 
