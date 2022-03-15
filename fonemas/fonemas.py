@@ -50,10 +50,16 @@ class transcription:
         for word in sentence.split():
             if len(word) > 5 and word.endswith('mente'):
                 syllabification = silabeador.syllabification(
-                    word.strip('mente'), True, ipa)
-                syllables = syllabification.syllables + ['ˌmen', 'te']
-                stress = syllabification.stress - 2
-                word.replace('mente', 'ˌmente')
+                    word[:-5], True, ipa)
+                syllables = syllabification.syllables
+                if len(syllables) > 1:
+                    syllables = syllables + ['ˌmen', 'te']
+                    stress = syllabification.stress - 2
+                    word.replace('mente', 'ˌmente')
+                else:
+                    syllables = syllables + ["'men", 'te']
+                    stress = -2
+
             else:
                 syllabification = silabeador.syllabification(word, True, ipa)
                 syllables = syllabification.syllables
@@ -101,14 +107,16 @@ class transcription:
         consonants = {'w': 'b', 'v': 'b', 'z': 'θ', 'x': 'ks', 'j': 'x',
                       'ñ': 'ɲ', 'qu': 'k', 'll': 'ʎ', 'ch': 'tʃ',
                       'r': 'ɾ', 'R': 'r',
-                      'ce': 'θe', 'cé': 'θe', 'cë': 'θë',
+                      'ce': 'θe', 'cé': 'θé', 'cë': 'θë',
                       'ci': 'θi', 'cí': 'θí', 'cï': 'θï', 'cj': 'θj',
                       'c': 'k', 'ph': 'f', 'h': ''}
         sentence = re.sub(r'(?:([nls])r|rr|\br)', r'\1R', sentence)
         sentence = sentence.replace('r', 'ɾ')
+        print('paso uno:', sentence)
         for consonant in consonants:
             if consonant in sentence:
                 sentence = sentence.replace(consonant, consonants[consonant])
+        print('paso dos:', sentence)
         if 'y' in sentence:
             sentence = re.sub(r'y', 'ʝ', sentence)
             sentence = re.sub(r'ʝ\b', 'i', sentence)
