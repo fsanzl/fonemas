@@ -20,7 +20,7 @@ class transcription:
                        'b': 'b', 'β': 'B', 'd': 'd', 'ð': 'D',
                        'g': 'g', 'ɣ': 'G',
                        'p': 'p', 't': 't', 'k': 'k',
-                       'l': 'l', 'ʎ': 'L', 'r': 'R', 'ɾ': 'R',
+                       'l': 'l', 'ʎ': 'L', 'r': 'R', 'ɾ': 'r',
                        'm': 'm', 'ɱ': 'M', 'n': 'n', 'ŋ': 'N', 'ɲ': '9',
                        'tʃ': 'X', 'ʝ': 'y', 'x': 'x', 'χ': '4',
                        'f': 'f', 's': 's', 'z': 'z', 'θ': 'Z'}
@@ -33,20 +33,18 @@ class transcription:
     def __clean(sentence):
         symbols = ['(', ')', '—', '…', ',', ';', ':', '?', '!', "'", '.',
                    '«', '»', '–', '—', '“', '”', '‘', '’', '"', '-', '(', ')']
-        letters =  {'õ': 'o', 'æ': 'ae',
+        letters = {'õ': 'o', 'æ': 'ae',
                    'à': 'a', 'è': 'e', 'ì': 'i', 'ò': 'o', 'ù': 'u'}
         for x in symbols:
             if x in sentence:
                 sentence = sentence.replace(x, '')
-        print('SS', sentence)
         for x in letters:
             if x in sentence:
                 sentence = sentence.replace(x, letters[x])
         return sentence
 
     def __splitvariables(self, sentence, ipa=False):
-        print('split', sentence)
-        stressed = {'':'','':'','':''}
+        stressed = {'': '', '': '', '': ''}
         syllabic = []
         wordy = []
         for word in sentence.split():
@@ -54,7 +52,7 @@ class transcription:
                 syllabification = silabeador.syllabification(
                     word.strip('mente'), True, ipa)
                 syllables = syllabification.syllables + ['ˌmen', 'te']
-                stress = syllabification.stress -2
+                stress = syllabification.stress - 2
                 word.replace('mente', 'ˌmente')
             else:
                 syllabification = silabeador.syllabification(word, True, ipa)
@@ -66,17 +64,18 @@ class transcription:
             syllables = diph['syllables']
             syllables[stress] = f"'{syllables[stress]}"
             for slb in syllables:
-
                 for char in slb:
                     if char == "'":
                         word = word[:conta] + "'" + word[conta:]
                     else:
                         conta += 1
             for idx, syllable in enumerate(syllables):
+                if len(syllables) == 1:
+                    syllable = syllable.strip("'")
                 for stress in stressed:
                     syllable = syllable.replace(stress, stressed[stress])
                 syllabic += [syllable]
-            if len(syllables) == 1:
+            if len(syllabic) == 1:
                 word = word.replace("'", '')
             wordy += [word]
         return {'sentence': wordy, 'syllables': syllabic}
@@ -124,8 +123,9 @@ class transcription:
         words = transcription['sentence']
         syllables = transcription['syllables']
         for letter in diacritics:
-            words = [word.replace(letter,diacritics[letter]) for word in words]
-            syllables = [syllable.replace(letter,diacritics[letter]) for
+            words = [word.replace(letter, diacritics[letter])
+                     for word in words]
+            syllables = [syllable.replace(letter, diacritics[letter]) for
                          syllable in syllables]
         return {'sentence': words, 'syllables': syllables}
 
@@ -133,7 +133,7 @@ class transcription:
         sentence = sentence.replace(
             'b', 'β').replace(
             'd', 'ð').replace(
-            'g', 'ɣ').replace("'", '').replace('ˌ','')
+            'g', 'ɣ').replace("'", '').replace('ˌ', '')
         sentence = re.sub(r'([mnɲ ^])β', r'\1b', sentence)
         sentence = re.sub(r'([mnɲlʎ ^])ð', r'\1d', sentence)
         sentence = re.sub(r'([mnɲ ^])ɣ', r'\1g', sentence)
@@ -189,8 +189,6 @@ class transcription:
         frase = self.__letras(frase.lower())
         t_fonologica = fonologica(frase)
         t_fonetica = fonetica(t_fonologica)
-        print(t_fonologica)
-        print(t_fonetica)
         silabas_des = silabeador.silabas(frase)
         silabas = silabas_des.silabas
         for idx, silaba in enumerate(silabas):
