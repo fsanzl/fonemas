@@ -6,7 +6,7 @@ import silabeador
 
 class transcription:
     def __init__(self, sentence):
-        self.sentence = self.__letters(sentence.lower())
+        self.sentence = self.__letters(self.__clean(sentence.lower()))
         self.phonology = self.transcription_fnl(self.sentence)
         self.phonetics = self.transcription_fnt(
             ' '.join(self.phonology['sentence']))
@@ -30,38 +30,37 @@ class transcription:
         return {'sentence': words, 'syllables': syllables}
 
     @staticmethod
-    def clean(sentence):
-        symbols = ['(', ')', '—', '…', ',', ';', ':', '?', '!', "'",
+    def __clean(sentence):
+        symbols = ['(', ')', '—', '…', ',', ';', ':', '?', '!', "'", '.',
                    '«', '»', '–', '—', '“', '”', '‘', '’', '"', '-', '(', ')']
         letters =  {'õ': 'o', 'æ': 'ae',
                    'à': 'a', 'è': 'e', 'ì': 'i', 'ò': 'o', 'ù': 'u'}
         for x in symbols:
             if x in sentence:
                 sentence = sentence.replace(x, '')
+        print('SS', sentence)
         for x in letters:
             if x in sentence:
                 sentence = sentence.replace(x, letters[x])
         return sentence
 
-
-
-
-    def __splitvariables(self, sentence):
+    def __splitvariables(self, sentence, ipa=False):
+        print('split', sentence)
         stressed = {'':'','':'','':''}
         syllabic = []
         wordy = []
         for word in sentence.split():
             if len(word) > 5 and word.endswith('mente'):
-                syllabification = silabeador.silabas(word.strip('mente'))
-                syllables = syllabification.silabas + ['ˌmen', 'te']
-                stress = syllabification.tonica -2
+                syllabification = silabeador.syllabification(
+                    word.strip('mente'), True, ipa)
+                syllables = syllabification.syllables + ['ˌmen', 'te']
+                stress = syllabification.stress -2
                 word.replace('mente', 'ˌmente')
             else:
-                syllabification = silabeador.silabas(word)
-                syllables = syllabification.silabas
-                stress = syllabification.tonica
+                syllabification = silabeador.syllabification(word, True, ipa)
+                syllables = syllabification.syllables
+                stress = syllabification.stress
             conta = 0
-            print(word, syllables)
             diph = self.__diphthongs(word, syllables)
             word = diph['word']
             syllables = diph['syllables']
@@ -74,8 +73,6 @@ class transcription:
                     else:
                         conta += 1
             for idx, syllable in enumerate(syllables):
-                if any(letter in 'AEIOU' for letter in syllable):
-                    word[idx] = f"'{syllable.lower()}"
                 for stress in stressed:
                     syllable = syllable.replace(stress, stressed[stress])
                 syllabic += [syllable]
@@ -136,23 +133,21 @@ class transcription:
         sentence = sentence.replace(
             'b', 'β').replace(
             'd', 'ð').replace(
-            'g', 'ɣ')
-        sentence = re.sub(r'([mnɲ]|\b)β', r'\1b', sentence)
-        sentence = re.sub(r'([mnɲlʎ]|\b)ð', r'\1d', sentence)
-        sentence = re.sub(r'([mnɲ]|\b)ɣ', r'\1g', sentence)
+            'g', 'ɣ').replace("'", '').replace('ˌ','')
+        sentence = re.sub(r'([mnɲ ^])β', r'\1b', sentence)
+        sentence = re.sub(r'([mnɲlʎ ^])ð', r'\1d', sentence)
+        sentence = re.sub(r'([mnɲ ^])ɣ', r'\1g', sentence)
         sentence = re.sub(r'θ([bdgβðɣmnɲlʎrɾ])', r'ð\1', sentence)
         sentence = re.sub(r's([bdgβðɣmnɲlʎrɾ])', r'z\1', sentence)
-        sentence = re.sub(r'f([bdgβðɣmnɲlʎrɾ])', r'v\1', sentence)
+        sentence = re.sub(r'f([bdgβðɣmnɲʎ])', r'v\1', sentence)
         allophones = {'nb': 'mb', 'nf': 'ɱf',
                       'nk': 'ŋk', 'ng': 'ŋg', 'nx': 'ŋx',
-                      'nθ': 'n̟θ',
-                      'lθ': 'l̟θ',
                       'xu': 'χu', 'xi': 'χi',
                       }
         if any(allophone in sentence for allophone in allophones):
             for allophone in allophones:
                 sentence = sentence.replace(allophone, allophones[allophone])
-        transcription = self.__splitvariables(sentence)
+        transcription = self.__splitvariables(sentence, True)
         return {'sentence': transcription['sentence'],
                 'syllables': transcription['syllables']}
 
@@ -173,8 +168,8 @@ class transcription:
         for idx, syllable in enumerate(syllables):
             if re.search('[aeiouáéíóú]{2,}', syllable):
                 i += 1
-                syllable = re.sub(r'([aeiouáééó])i', rf'\1j', syllable)
-                syllable = re.sub(r'([aeiouáééó])u', rf'\1w', syllable)
+                syllable = re.sub(r'([aeoáééó])i', rf'\1j', syllable)
+                syllable = re.sub(r'([aeoáééó])u', rf'\1w', syllable)
                 word = self.__replace_ocurrence(word,
                                                 syllables[idx],
                                                 syllable, i)
