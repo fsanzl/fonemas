@@ -180,21 +180,19 @@ class transcription:
         for idx, syllable in enumerate(syllables):
             if re.search('[aeiouáéíóú]{2,}', syllable):
                 i += 1
-                syllable = re.sub(r'([aeoáééó])i', rf'\1j', syllable)
-                syllable = re.sub(r'([aeoáééó])u', rf'\1w', syllable)
+                syllable = re.sub(r'([aeouáééóú])i', r'\1j', syllable)
+                syllable = re.sub(r'([aeoiáééóú])u', r'\1w', syllable)
                 word = self.__replace_ocurrence(word,
                                                 syllables[idx],
                                                 syllable, i)
-
             if re.search('[ui][aeiouáééiíóú]', syllable):
                 j += 1
-                syllable = re.sub(r'i([aeouáééiíóú])', rf'j\1', syllable)
-                syllable = re.sub(r'u([aeioáééiíóú])', rf'w\1', syllable)
+                syllable = re.sub(r'i([aeouáééiíóú])', r'j\1', syllable)
+                syllable = re.sub(r'u([aeioáééiíóú])', r'w\1', syllable)
                 word = self.__replace_ocurrence(word,
                                                 syllables[idx],
                                                 syllable, j)
             syllables[idx] = syllable
-
         return {'word': word, 'syllables': syllables}
 
     def transcribe(frase):
