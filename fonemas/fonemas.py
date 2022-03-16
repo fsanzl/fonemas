@@ -5,8 +5,9 @@ import silabeador
 
 
 class transcription:
-    def __init__(self, sentence, mono=False):
-        self.sentence = self.__letters(self.__clean(sentence.lower()))
+    def __init__(self, sentence, mono=False, epentesis=True):
+        self.sentence = self.__letters(self.__clean(sentence.lower(),
+                                                    epentesis))
         self.phonology = self.transcription_fnl(self.sentence, mono)
         self.phonetics = self.transcription_fnt(
             ' '.join(self.phonology['sentence']), mono)
@@ -31,7 +32,7 @@ class transcription:
 
 
     @staticmethod
-    def __clean(sentence):
+    def __clean(sentence, epentesis):
         symbols = ['(', ')', '—', '…', ',', ';', ':', '?', '!', "'", '.',
                    '«', '»', '–', '—', '“', '”', '‘', '’', '"', '-', '(', ')']
         letters = {'õ': 'o', 'æ': 'ae',
@@ -42,7 +43,9 @@ class transcription:
         for x in letters:
             if x in sentence:
                 sentence = sentence.replace(x, letters[x])
-        return re.sub(r'\bs((?![aeiouáéíóúäëïöü]))', r'es\1', sentence)
+        if epentesis:
+            sentence = re.sub(r'\bs((?![aeiouáéíóúäëïöü]))', r'es\1', sentence)
+        return sentence
 
     def __splitvariables(self, sentence, ipa, mono):
         stressed = {'': '', '': '', '': ''}
