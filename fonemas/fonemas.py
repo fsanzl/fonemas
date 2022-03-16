@@ -29,6 +29,7 @@ class transcription:
             syllables = syllables.replace(phoneme, translation[phoneme])
         return {'sentence': words, 'syllables': syllables}
 
+
     @staticmethod
     def __clean(sentence):
         symbols = ['(', ')', '—', '…', ',', ';', ':', '?', '!', "'", '.',
@@ -41,7 +42,7 @@ class transcription:
         for x in letters:
             if x in sentence:
                 sentence = sentence.replace(x, letters[x])
-        return sentence
+        return re.sub(r'\bs((?![aeiouáéíóúäëïöü]))', r'es\1', sentence)
 
     def __splitvariables(self, sentence, ipa, mono):
         stressed = {'': '', '': '', '': ''}
@@ -112,14 +113,17 @@ class transcription:
                       'c': 'k', 'ph': 'f', 'h': ''}
         sentence = re.sub(r'(?:([nls])r|rr|\br)', r'\1R', sentence)
         sentence = sentence.replace('r', 'ɾ')
-        print('paso uno:', sentence)
         for consonant in consonants:
             if consonant in sentence:
                 sentence = sentence.replace(consonant, consonants[consonant])
-        print('paso dos:', sentence)
         if 'y' in sentence:
-            sentence = re.sub(r'y', 'ʝ', sentence)
-            sentence = re.sub(r'ʝ\b', 'i', sentence)
+            sentence = sentence.replace('y', 'ʝ')
+            for key, value in diacritics.items():
+                if key in 'áéíóú':
+                    sentence  = re.sub(rf'{value}ʝ\b', f'{key}i', sentence)
+            #sentence = re.sub(r'y', 'ʝ', sentence)
+            #sentence = re.sub(r'ʝ\b', 'i', sentence)
+            sentence = re.sub(r'ʝ((?![aeiouáéíóú]))', r'i\1', sentence)
         if 'g' in sentence:
             for reg in [
                 [r'g([eiéíiëï])', rf'x\1'],
