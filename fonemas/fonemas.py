@@ -68,11 +68,9 @@ class transcription:
                 syllabification = silabeador.syllabification(word, True, ipa)
                 syllables = syllabification.syllables
                 stress = syllabification.stress
-                print('syllables', syllables, 'stress', stress)
             conta = 0
             diph = self.__diphthongs(word, syllables)
             word = diph['word']
-            print(word, diph, syllables)
             syllables = diph['syllables']
             syllables[stress] = f"'{syllables[stress]}"
             for slb in syllables:
