@@ -68,9 +68,11 @@ class transcription:
                 syllabification = silabeador.syllabification(word, True, ipa)
                 syllables = syllabification.syllables
                 stress = syllabification.stress
+                print('syllables', syllables, 'stress', stress)
             conta = 0
             diph = self.__diphthongs(word, syllables)
             word = diph['word']
+            print(word, diph, syllables)
             syllables = diph['syllables']
             syllables[stress] = f"'{syllables[stress]}"
             for slb in syllables:
@@ -197,25 +199,3 @@ class transcription:
                                                 syllable, j)
             syllables[idx] = syllable
         return {'word': word, 'syllables': syllables}
-
-    def transcribe(frase):
-        frase = self.__letras(frase.lower())
-        t_fonologica = fonologica(frase)
-        t_fonetica = fonetica(t_fonologica)
-        silabas_des = silabeador.silabas(frase)
-        silabas = silabas_des.silabas
-        for idx, silaba in enumerate(silabas):
-            if re.search('[aeiouáéíóú]{2,}', silaba):
-                silaba = re.sub(r'([aeiouáééó])i', rf'\1j', silaba)
-                silaba = re.sub(r'([aeiouáééó])u', rf'\1w', silaba)
-            if re.search('[ui][aeiouáééiíóú]', silaba):
-                silaba = re.sub(r'i([aeouáééiíóú])', rf'j\1', silaba)
-                silaba = re.sub(r'u([aeioáééiíóú])', rf'w\1', silaba)
-            for letra in diacriticos:
-                if letra in silaba:
-                    silaba = silaba.replace(letra, diacriticos[letra])
-            silabas[idx] = silaba
-        if silabas[0].startswith('ɾ'):
-            silabas[0] = re.sub('^ɾ', 'r', silabas[0])
-        silabas[silabas_des.tonica] = f"'{silabas[silabas_des.tonica]}"
-        return silabas
