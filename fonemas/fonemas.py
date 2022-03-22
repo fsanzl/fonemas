@@ -116,7 +116,7 @@ class transcription:
             if consonant in sentence:
                 sentence = sentence.replace(consonant, consonants[consonant])
         if 'y' in sentence:
-            sentence = re.sub(r'\by\b', 'i', sentence) 
+            sentence = re.sub(r'\by\b', 'i', sentence)
             sentence = re.sub(r'y\b', 'j', sentence)
             sentence = sentence.replace('y', 'ʝ')
             for key, value in diacritics.items():
@@ -189,14 +189,14 @@ class transcription:
         i = 0
         j = 0
         for idx, syllable in enumerate(syllables):
-            if re.search('[aeiouáéíóú]{2,}', syllable):
+            if re.search(r'[aeiouáéíóú]{2,}', syllable):
                 i += 1
                 syllable = re.sub(r'([aeouáééóú])i', r'\1j', syllable)
                 syllable = re.sub(r'([aeoiáééóú])u', r'\1w', syllable)
                 word = self.__replace_ocurrence(word,
                                                 syllables[idx],
                                                 syllable, i)
-            if re.search('[ui][aeiouáééiíóú]', syllable):
+            if re.search(r'[ui][aeiouáééiíóú]', syllable):
                 j += 1
                 syllable = re.sub(r'i([aeouáééiíóú])', r'j\1', syllable)
                 syllable = re.sub(r'u([aeioáééiíóú])', r'w\1', syllable)
