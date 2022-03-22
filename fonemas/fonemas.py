@@ -46,13 +46,13 @@ class transcription:
             sentence = re.sub(r'\bs((?![aeiouáéíóúäëïöü]))', r'es\1', sentence)
         return sentence
 
-    def __splitvariables(self, sentence, ipa, mono):
+    def __splitvariables(self, sentence, mono):
         syllabic = []
         wordy = []
         for word in sentence.split():
             if len(word) > 5 and word.endswith('mente'):
                 syllabification = silabeador.syllabification(
-                    word[:-5], True, ipa)
+                    word[:-5], True, True)
                 syllables = syllabification.syllables
                 if len(syllables) > 1:
                     syllables = syllables + ['ˌmen', 'te']
@@ -63,7 +63,7 @@ class transcription:
                     stress = -2
 
             else:
-                syllabification = silabeador.syllabification(word, True, ipa)
+                syllabification = silabeador.syllabification(word, True, True)
                 syllables = syllabification.syllables
                 stress = syllabification.stress
             conta = 0
@@ -117,6 +117,7 @@ class transcription:
                 sentence = sentence.replace(consonant, consonants[consonant])
         if 'y' in sentence:
             sentence = sentence.replace('y', 'ʝ')
+            sentence = re.sub(r'ʝ\b', 'j', sentence)
             for key, value in diacritics.items():
                 if key in 'áéíóú':
                     sentence = re.sub(rf'{value}ʝ\b', f'{key}i', sentence)
@@ -130,7 +131,7 @@ class transcription:
                 sentence = re.sub(reg[0], reg[1], sentence)
             if 'gü' in sentence:
                 sentence = sentence.replace('gü', 'gw')
-        transcription = self.__splitvariables(sentence, False, mono)
+        transcription = self.__splitvariables(sentence, mono)
         words = transcription['words']
         syllables = transcription['syllables']
         for letter in diacritics:
