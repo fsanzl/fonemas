@@ -5,17 +5,18 @@ import silabeador
 
 
 class transcription:
-    def __init__(self, sentence, mono=False, epentesis=True):
+    def __init__(self, sentence, mono=False, epenthesis=True):
         self.sentence = self.__letters(self.__clean(sentence.lower(),
-                                                    epentesis))
+                                                    epenthesis))
         self.phonology = self.transcription_fnl(self.sentence, mono)
-        self.phonetics = self.transcription_fnt(
-            ' '.join(self.phonology['sentence']), mono)
-        self.ascii = self.ipa2ascii(self.phonetics)
+        self.transliteration = self.transcription_fnt(self.phonology)
+        self.phonetics = {'words': self.transliteration['phon_words'],
+                          'syllables': self.transliteration['phon_syllables']}
+        self.ascii = {'words': self.transliteration['ascii_words'],
+                      'syllables': self.transliteration['ascii_syllables']}
 
-    def ipa2ascii(self, sentence):
-        words = ' '.join(sentence['sentence'])
-        syllables = ' '.join(sentence['syllables'])
+    @staticmethod
+    def ipa2ascii(words):
         translation = {'a': 'a', 'e': 'e', 'i': 'i', 'o': 'o', 'u': 'u',
                        'j': 'j', 'w': 'w',
                        'b': 'b', 'β': 'B', 'd': 'd', 'ð': 'D',
@@ -27,12 +28,10 @@ class transcription:
                        'f': 'f', 's': 's', 'z': 'z', 'θ': 'Z'}
         for phoneme in translation:
             words = words.replace(phoneme, translation[phoneme])
-            syllables = syllables.replace(phoneme, translation[phoneme])
-        return {'sentence': words, 'syllables': syllables}
-
+        return words
 
     @staticmethod
-    def __clean(sentence, epentesis):
+    def __clean(sentence, epenthesis):
         symbols = ['(', ')', '—', '…', ',', ';', ':', '?', '!', "'", '.',
                    '«', '»', '–', '—', '“', '”', '‘', '’', '"', '-', '(', ')']
         letters = {'õ': 'o', 'æ': 'ae',
@@ -43,12 +42,11 @@ class transcription:
         for x in letters:
             if x in sentence:
                 sentence = sentence.replace(x, letters[x])
-        if epentesis:
+        if epenthesis:
             sentence = re.sub(r'\bs((?![aeiouáéíóúäëïöü]))', r'es\1', sentence)
         return sentence
 
     def __splitvariables(self, sentence, ipa, mono):
-        stressed = {'': '', '': '', '': ''}
         syllabic = []
         wordy = []
         for word in sentence.split():
@@ -59,7 +57,7 @@ class transcription:
                 if len(syllables) > 1:
                     syllables = syllables + ['ˌmen', 'te']
                     stress = syllabification.stress - 2
-                    word.replace('mente', 'ˌmente')
+                    word = word.replace('mente', 'ˌmente')
                 else:
                     syllables = syllables + ["'men", 'te']
                     stress = -2
@@ -73,7 +71,7 @@ class transcription:
             word = diph['word']
             syllables = diph['syllables']
             syllables[stress] = f"'{syllables[stress]}"
-            for slb in syllables:
+            for idx, slb in enumerate(syllables):
                 for char in slb:
                     if char == "'":
                         word = word[:conta] + "'" + word[conta:]
@@ -82,13 +80,11 @@ class transcription:
             for idx, syllable in enumerate(syllables):
                 if mono and len(syllables) == 1:
                     syllable = syllable.strip("'")
-                for stress in stressed:
-                    syllable = syllable.replace(stress, stressed[stress])
                 syllabic += [syllable]
             if len(syllabic) == 1:
                 word = word.replace("'", '')
             wordy += [word]
-        return {'sentence': wordy, 'syllables': syllabic}
+        return {'words': wordy, 'syllables': syllabic}
 
     @staticmethod
     def __letters(sentence):
@@ -123,9 +119,9 @@ class transcription:
             sentence = sentence.replace('y', 'ʝ')
             for key, value in diacritics.items():
                 if key in 'áéíóú':
-                    sentence  = re.sub(rf'{value}ʝ\b', f'{key}i', sentence)
-            #sentence = re.sub(r'y', 'ʝ', sentence)
-            #sentence = re.sub(r'ʝ\b', 'i', sentence)
+                    sentence = re.sub(rf'{value}ʝ\b', f'{key}i', sentence)
+            # sentence = re.sub(r'y', 'ʝ', sentence)
+            # sentence = re.sub(r'ʝ\b', 'i', sentence)
             sentence = re.sub(r'ʝ((?![aeiouáéíóú]))', r'i\1', sentence)
         if 'g' in sentence:
             for reg in [
@@ -135,36 +131,46 @@ class transcription:
             if 'gü' in sentence:
                 sentence = sentence.replace('gü', 'gw')
         transcription = self.__splitvariables(sentence, False, mono)
-        words = transcription['sentence']
+        words = transcription['words']
         syllables = transcription['syllables']
         for letter in diacritics:
             words = [word.replace(letter, diacritics[letter])
                      for word in words]
             syllables = [syllable.replace(letter, diacritics[letter]) for
                          syllable in syllables]
-        return {'sentence': words, 'syllables': syllables}
+        return {'words': words, 'syllables': syllables}
 
-    def transcription_fnt(self, sentence, mono):
-        sentence = sentence.replace(
-            'b', 'β').replace(
-            'd', 'ð').replace(
-            'g', 'ɣ').replace("'", '').replace('ˌ', '')
-        sentence = re.sub(r'([mnɲ ^])β', r'\1b', sentence)
-        sentence = re.sub(r'([mnɲlʎ ^])ð', r'\1d', sentence)
-        sentence = re.sub(r'([mnɲ ^])ɣ', r'\1g', sentence)
-        sentence = re.sub(r'θ([bdgβðɣmnɲlʎrɾ])', r'ð\1', sentence)
-        sentence = re.sub(r's([bdgβðɣmnɲlʎrɾ])', r'z\1', sentence)
-        sentence = re.sub(r'f([bdgβðɣmnɲʎ])', r'v\1', sentence)
+    @staticmethod
+    def __fsubstitute(words):
+        words = words.replace('b', 'β').replace('d', 'ð').replace('g', 'ɣ')
+        words = re.sub(r'([mnɲ ^])(\-*)β', r'\1\2b', words)
+        words = re.sub(r'([mnɲlʎ ^])(\-*)ð', r'\1\2d', words)
+        words = re.sub(r'([mnɲ ^])(\-*)ɣ', r'\1\2g', words)
+        words = re.sub(r'θ(\-*)([bdgβðɣmnɲlʎrɾ])', r'ð\1\2', words)
+        words = re.sub(r's(\-*)([bdgβðɣmnɲlʎrɾ])', r'z\1\2', words)
+        words = re.sub(r'f(\-*)([bdgβðɣmnɲʎ])', r'v\1\2', words)
         allophones = {'nb': 'mb', 'nf': 'ɱf',
                       'nk': 'ŋk', 'ng': 'ŋg', 'nx': 'ŋx',
-                      'xu': 'χu', 'xi': 'χi',
+                      'xu': 'χu', 'xo': 'χo', 'xw': 'χw',
+                      'n-b': 'm-b', 'n-f': 'ɱ-f',
+                      'n-k': 'ŋ-k', 'n-g': 'ŋ-g', 'n-x': 'ŋ-x'
                       }
-        if any(allophone in sentence for allophone in allophones):
+        if any(allophone in words for allophone in allophones):
             for allophone in allophones:
-                sentence = sentence.replace(allophone, allophones[allophone])
-        transcription = self.__splitvariables(sentence, True, mono)
-        return {'sentence': transcription['sentence'],
-                'syllables': transcription['syllables']}
+                words = words.replace(allophone, allophones[allophone])
+        return words.replace('-', ' ')
+
+    def transcription_fnt(self, phonology):
+        words = ' '.join(phonology['words'])
+        syllables = '-'.join(phonology['syllables'])
+        phon_words = self.__fsubstitute(words)
+        phon_syllables = self.__fsubstitute(syllables)
+        ascii_words = self.ipa2ascii(phon_words)
+        ascii_syllables = self.ipa2ascii(phon_syllables)
+        return {'phon_words': self.__fsubstitute(phon_words).split(),
+                'phon_syllables': self.__fsubstitute(phon_syllables).split(),
+                'ascii_words': self.__fsubstitute(ascii_words).split(),
+                'ascii_syllables': self.__fsubstitute(ascii_syllables).split()}
 
     @staticmethod
     def __replace_ocurrence(string, origin, to, num):
