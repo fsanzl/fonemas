@@ -15,7 +15,7 @@ setup(
     name="fonemas",
     version="2.0.0",
     python_requires='>=3.5',
-    description="Phonologic transcription of Spanish",
+    description="Phonetic transcription of Spanish",
     long_description=README,
     long_description_content_type="text/markdown",
     url="https://github.com/fsanzl/fonemas",
