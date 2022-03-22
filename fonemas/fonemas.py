@@ -32,13 +32,14 @@ class transcription:
 
     @staticmethod
     def __clean(sentence, epenthesis):
-        symbols = ['(', ')', '—', '…', ',', ';', ':', '?', '!', "'", '.',
-                   '«', '»', '–', '—', '“', '”', '‘', '’', '"', '-', '(', ')']
+        symbols = ['(', ')', '¿', '?', '¡', '!', '«', '»', '“', '”', '‘', '’',
+                   '[', ']',
+                   '—', '…', ',', ';', ':', "'", '.', '–', '—', '"', '-']
         letters = {'õ': 'o', 'æ': 'ae',
                    'à': 'a', 'è': 'e', 'ì': 'i', 'ò': 'o', 'ù': 'u'}
         for x in symbols:
             if x in sentence:
-                sentence = sentence.replace(x, '')
+                sentence = sentence.replace(x, ' ')
         for x in letters:
             if x in sentence:
                 sentence = sentence.replace(x, letters[x])
