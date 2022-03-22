@@ -116,8 +116,9 @@ class transcription:
             if consonant in sentence:
                 sentence = sentence.replace(consonant, consonants[consonant])
         if 'y' in sentence:
+            sentence = re.sub(r'\by\b', 'i', sentence) 
+            sentence = re.sub(r'y\b', 'j', sentence)
             sentence = sentence.replace('y', 'ʝ')
-            sentence = re.sub(r'ʝ\b', 'j', sentence)
             for key, value in diacritics.items():
                 if key in 'áéíóú':
                     sentence = re.sub(rf'{value}ʝ\b', f'{key}i', sentence)
@@ -185,7 +186,6 @@ class transcription:
             return string.replace(origin, to)
 
     def __diphthongs(self, word, syllables):
-        print(word, syllables)
         i = 0
         j = 0
         for idx, syllable in enumerate(syllables):
