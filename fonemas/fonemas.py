@@ -129,8 +129,8 @@ class transcription:
                 [r'g([eiéíiëï])', rf'x\1'],
                     [r'g[u]([eiéíëï])', rf'g\1']]:
                 sentence = re.sub(reg[0], reg[1], sentence)
-            if 'gü' in sentence:
-                sentence = sentence.replace('gü', 'gw')
+            sentence = re.sub(r'gü([ei])', r'gw\1', sentence)
+            sentence = re.sub(r'gu([ao])', r'gw\1', sentence)
         transcription = self.__splitvariables(sentence, mono)
         words = transcription['words']
         syllables = transcription['syllables']
@@ -185,6 +185,7 @@ class transcription:
             return string.replace(origin, to)
 
     def __diphthongs(self, word, syllables):
+        print(word, syllables)
         i = 0
         j = 0
         for idx, syllable in enumerate(syllables):
