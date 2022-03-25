@@ -5,27 +5,29 @@ import silabeador
 
 
 class transcription:
-    def __init__(self, sentence, mono=False, epenthesis=True):
+    def __init__(self, sentence, mono=False, epenthesis=False, sampastr = '"'):
         self.sentence = self.__letters(self.__clean(sentence.lower(),
                                                     epenthesis))
+        print('sentence', self.sentence)
         self.phonology = self.transcription_fnl(self.sentence, mono)
-        self.transliteration = self.transcription_fnt(self.phonology)
+        self.transliteration = self.transcription_fnt(self.phonology, sampastr)
         self.phonetics = {'words': self.transliteration['phon_words'],
                           'syllables': self.transliteration['phon_syllables']}
-        self.ascii = {'words': self.transliteration['ascii_words'],
+        self.sampa = {'words': self.transliteration['ascii_words'],
                       'syllables': self.transliteration['ascii_syllables']}
 
     @staticmethod
-    def ipa2ascii(words):
+    def ipa2sampa(words, sampastr):
         translation = {'a': 'a', 'e': 'e', 'i': 'i', 'o': 'o', 'u': 'u',
                        'j': 'j', 'w': 'w',
                        'b': 'b', 'β': 'B', 'd': 'd', 'ð': 'D',
                        'g': 'g', 'ɣ': 'G',
                        'p': 'p', 't': 't', 'k': 'k',
-                       'l': 'l', 'ʎ': 'L', 'r': 'R', 'ɾ': 'r',
-                       'm': 'm', 'ɱ': 'M', 'n': 'n', 'ŋ': 'N', 'ɲ': '9',
-                       'tʃ': 'X', 'ʝ': 'y', 'x': 'x', 'χ': '4',
-                       'f': 'f', 's': 's', 'z': 'z', 'θ': 'Z'}
+                       'l': 'l', 'ʎ': 'L', 'r': 'rr', 'ɾ': 'r',
+                       'm': 'm', 'ɱ': 'M', 'n': 'n', 'ŋ': 'N', 'ɲ': 'J',
+                       'tʃ': 'tS', 'ʝ': 'y', 'x': 'x', 'χ': '4',
+                       'f': 'f', 's': 's', 'z': 'z', 'θ': 'T',
+                       'ˈ': sampastr, 'ˌ': '%'}
         for phoneme in translation:
             words = words.replace(phoneme, translation[phoneme])
         return words
@@ -49,7 +51,7 @@ class transcription:
 
     def __splitvariables(self, sentence, mono):
         syllabic = []
-        wordy = []
+        words = []
         for word in sentence.split():
             if len(word) > 5 and word.endswith('mente'):
                 syllabification = silabeador.syllabification(
@@ -60,9 +62,8 @@ class transcription:
                     stress = syllabification.stress - 2
                     word = word.replace('mente', 'ˌmente')
                 else:
-                    syllables = syllables + ["'men", 'te']
+                    syllables = syllables + ["ˈmen", 'te']
                     stress = -2
-
             else:
                 syllabification = silabeador.syllabification(word, True, True)
                 syllables = syllabification.syllables
@@ -71,21 +72,21 @@ class transcription:
             diph = self.__diphthongs(word, syllables)
             word = diph['word']
             syllables = diph['syllables']
-            syllables[stress] = f"'{syllables[stress]}"
+            syllables[stress] = f"ˈ{syllables[stress]}"
             for idx, slb in enumerate(syllables):
                 for char in slb:
-                    if char == "'":
-                        word = word[:conta] + "'" + word[conta:]
+                    if char == "ˈ":
+                        word = word[:conta] + "ˈ" + word[conta:]
                     else:
                         conta += 1
             for idx, syllable in enumerate(syllables):
-                if mono and len(syllables) == 1:
-                    syllable = syllable.strip("'")
+                if not mono and len(syllables) == 1:
+                    syllable = syllable.strip("ˈ")
                 syllabic += [syllable]
-            if len(syllabic) == 1:
-                word = word.replace("'", '')
-            wordy += [word]
-        return {'words': wordy, 'syllables': syllabic}
+            if len(syllables) == 1 and not mono:
+                word = word.replace('ˈ', '')
+            words += [word]
+        return {'words': words, 'syllables': syllabic}
 
     @staticmethod
     def __letters(sentence):
@@ -152,24 +153,30 @@ class transcription:
         words = re.sub(r'θ(\-*)([bdgβðɣmnɲlʎrɾ])', r'ð\1\2', words)
         words = re.sub(r's(\-*)([bdgβðɣmnɲlʎrɾ])', r'z\1\2', words)
         words = re.sub(r'f(\-*)([bdgβðɣmnɲʎ])', r'v\1\2', words)
-        allophones = {'nb': 'mb', 'nf': 'ɱf',
-                      'nk': 'ŋk', 'ng': 'ŋg', 'nx': 'ŋx',
+        allophones = {'nb': 'mb', 'nˈb': 'mˈb',
+                      'nf': 'ɱf', 'nˈf': 'ɱˈf',
+                      'nk': 'ŋk', 'nˈk': 'ŋˈk',
+                      'ng': 'ŋg', 'nˈg': 'ŋˈg',
+                      'nx': 'ŋx', 'nˈx': 'ŋˈx',
                       'xu': 'χu', 'xo': 'χo', 'xw': 'χw',
-                      'n-b': 'm-b', 'n-f': 'ɱ-f',
-                      'n-k': 'ŋ-k', 'n-g': 'ŋ-g', 'n-x': 'ŋ-x'
+                      'n-b': 'm-b', 'n-ˈb': 'm-ˈb',
+                      'n-f': 'ɱ-f', 'n-ˈf': 'ɱ-ˈf',
+                      'n-k': 'ŋ-k', 'n-ˈk': 'ŋ-ˈk',
+                      'n-g': 'ŋ-g', 'n-ˈg': 'ŋ-ˈg',
+                      'n-x': 'ŋ-x', 'n-ˈx': 'ŋ-ˈx'
                       }
         if any(allophone in words for allophone in allophones):
             for allophone in allophones:
                 words = words.replace(allophone, allophones[allophone])
         return words.replace('-', ' ')
 
-    def transcription_fnt(self, phonology):
+    def transcription_fnt(self, phonology, sampastr):
         words = ' '.join(phonology['words'])
         syllables = '-'.join(phonology['syllables'])
         phon_words = self.__fsubstitute(words)
         phon_syllables = self.__fsubstitute(syllables)
-        ascii_words = self.ipa2ascii(phon_words)
-        ascii_syllables = self.ipa2ascii(phon_syllables)
+        ascii_words = self.ipa2sampa(phon_words, sampastr)
+        ascii_syllables = self.ipa2sampa(phon_syllables, sampastr)
         return {'phon_words': self.__fsubstitute(phon_words).split(),
                 'phon_syllables': self.__fsubstitute(phon_syllables).split(),
                 'ascii_words': self.__fsubstitute(ascii_words).split(),
