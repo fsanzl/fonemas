@@ -1,5 +1,5 @@
 [![License: LGPL](https://img.shields.io/github/license/fsanzl/fonemas)](https://opensource.org/licenses/LGPL-2.1)
-[![Version: 2.0.0-3](https://img.shields.io/github/v/release/fsanzl/fonemas)](https://pypi.org/project/fonemas/)
+[![Version: 2.0.1](https://img.shields.io/github/v/release/fsanzl/fonemas)](https://pypi.org/project/fonemas/)
 [![Python versions: 3.5, 3.6, 3.7, 3.8, 3.9](https://img.shields.io/pypi/pyversions/fonemas)](https://pypi.org/project/fonemas/)
 
 
@@ -21,8 +21,7 @@ pip3 install fonemas
 
 The library provides the class  *transcription(sentence, mono, epenthesis)*. The class takes the obligatoy argument *sentence*, which is a string of characters with a Spanish word or words. It optionally takes two Boolean arguments *mono* and *epenthesis* set to False as default. The argument *mono* sets whether the output shows graphic stresses for monosyllabic words and *epenthesis* set the behaviour S bfore consonant in onset (spiritu -> es pi ri tu|spi ri tu).
 
-*transcription()* has three dictionary attributes: *phonology* for the phonological transcription, *phonetics* for the phonetic transcription, and *ascii* for a phonetic trasncription transliterated to ASCII characters. Both *phonology* and *phonetics*  have two keys *{sentence, syllables}* containing each a list of strings, whose elements are words or syllables, respectivelly. *ascii* values are strings with the values separated by spaces.
-
+*transcription()* has three dictionary attributes: *phonology* for the phonological transcription, *phonetics* for the phonetic transcription in IPA symbols (requires UNICODE support), and *sampa* for the phonetic transcription SAMPA transliteration. All attributes are dictionaries with two keys *{sentence, syllables}* containing each a list of strings, which may be words or syllables, respectively.
 
 ```python
 >>> from fonemas import transcription
@@ -31,9 +30,8 @@ The library provides the class  *transcription(sentence, mono, epenthesis)*. The
 {'words': ["abeɾig'wejs"], 'syllables': ['a', 'be', 'ɾi', "'gwejs"]}
 >>> object.phonetics
 {'words': ["aβe'ɾiɣwejs"], 'syllables': ['a', 'βe', "'ɾi", 'ɣwejs']}
->>> object.ascii
+>>> object.sampa
 {'words': "aBeri'Gwejs", 'syllables': "a Be ri 'Gwejs"}
-['a', 'be', 'ɾi', "'gwejs"]
 ```
 
 ## Description
