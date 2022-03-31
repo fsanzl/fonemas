@@ -9,7 +9,7 @@
 
 *fonemas* is a Python library of methods and functions for phonologic and phonetic ranscription of Spanish words.
 
-This library is part of the research project [Sound and Meaning in Spanish Golden Age Literature](https://soundandmeaning.univie.ac.at/). This library was originally intended to analyse only pohonological features relevant to verse scansion. It has expanded its functionality ever since and now it is a full featured phonological  and phonetic analyser. In order to improve its usability, SAMPA support has been added.
+This library is part of the research project [Sound and Meaning in Spanish Golden Age Literature](https://soundandmeaning.univie.ac.at/). This library was originally intended to analyse only pohonological features relevant to verse scansion. It has expanded its functionality ever since to become a fully featured phonological and phonetic analyser with IPA and SAMPA support.
 
 ## Installation
 
