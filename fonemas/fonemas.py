@@ -3,7 +3,6 @@
 import re
 import silabeador
 
-
 class transcription:
     def __init__(self, sentence, mono=False, epenthesis=False, sampastr = '"'):
         self.sentence = self.__letters(self.__clean(sentence.lower(),
@@ -25,7 +24,7 @@ class transcription:
                        'p': 'p', 't': 't', 'k': 'k',
                        'l': 'l', 'ʎ': 'L', 'r': 'rr', 'ɾ': 'r',
                        'm': 'm', 'ɱ': 'M', 'n': 'n', 'ŋ': 'N', 'ɲ': 'J',
-                       'tʃ': 'tS', 'ʝ': 'y', 'x': 'x', 'χ': '4',
+                       'ʧ': 'tS', 'ʝ': 'y', 'x': 'x', 'χ': '4',
                        'f': 'f', 's': 's', 'z': 'z', 'θ': 'T',
                        'ˈ': sampastr, 'ˌ': '%'}
         for phoneme in translation:
@@ -107,7 +106,7 @@ class transcription:
                       'ú': 'u', 'ù': 'u', 'ü': 'u'}
 
         consonants = {'w': 'b', 'v': 'b', 'z': 'θ', 'x': 'ks', 'j': 'x',
-                      'ñ': 'ɲ', 'qu': 'k', 'll': 'ʎ', 'ch': 'tʃ',
+                      'ñ': 'ɲ', 'qu': 'k', 'll': 'ʎ', 'ch': 'ʧ',
                       'r': 'ɾ', 'R': 'r',
                       'ce': 'θe', 'cé': 'θé', 'cë': 'θë',
                       'ci': 'θi', 'cí': 'θí', 'cï': 'θï', 'cj': 'θj',
