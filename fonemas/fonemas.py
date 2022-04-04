@@ -7,7 +7,6 @@ class transcription:
     def __init__(self, sentence, mono=False, epenthesis=False, sampastr = '"'):
         self.sentence = self.__letters(self.__clean(sentence.lower(),
                                                     epenthesis))
-        print('sentence', self.sentence)
         self.phonology = self.transcription_fnl(self.sentence, mono)
         self.transliteration = self.transcription_fnt(self.phonology, sampastr)
         self.phonetics = {'words': self.transliteration['phon_words'],
