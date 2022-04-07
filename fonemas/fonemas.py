@@ -3,12 +3,17 @@
 import re
 import silabeador
 
+
 class transcription:
-    def __init__(self, sentence, mono=False, epenthesis=False, sampastr = '"'):
+    def __init__(self, sentence, mono=False, epenthesis=False,
+                 aspiration=False, sampastr='"'):
+        self.sampastr = sampastr
         self.sentence = self.__letters(self.__clean(sentence.lower(),
                                                     epenthesis))
-        self.phonology = self.transcription_fnl(self.sentence, mono)
-        self.transliteration = self.transcription_fnt(self.phonology, sampastr)
+        self.phonology = self.transcription_fnl(self.sentence, mono,
+                                                aspiration)
+        self.transliteration = self.transcription_fnt(self.phonology,
+                                                      self.sampastr)
         self.phonetics = {'words': self.transliteration['phon_words'],
                           'syllables': self.transliteration['phon_syllables']}
         self.sampa = {'words': self.transliteration['ascii_words'],
@@ -25,6 +30,7 @@ class transcription:
                        'm': 'm', 'ɱ': 'M', 'n': 'n', 'ŋ': 'N', 'ɲ': 'J',
                        'ʧ': 'tS', 'ʝ': 'y', 'x': 'x', 'χ': '4',
                        'f': 'f', 's': 's', 'z': 'z', 'θ': 'T',
+                       'ʰ': 'h',
                        'ˈ': sampastr, 'ˌ': '%'}
         for phoneme in translation:
             words = words.replace(phoneme, translation[phoneme])
@@ -97,7 +103,7 @@ class transcription:
             sentence = re.sub(rf'\b{letter}\b', 'letters[letter]', sentence)
         return sentence
 
-    def transcription_fnl(self, sentence, mono):
+    def transcription_fnl(self, sentence, mono, aspiration):
         diacritics = {'á': 'a', 'à': 'a', 'ä': 'a',
                       'é': 'e', 'è': 'e', 'ë': 'e',
                       'í': 'i', 'ì': 'i', 'ï': 'i',
@@ -109,12 +115,16 @@ class transcription:
                       'r': 'ɾ', 'R': 'r',
                       'ce': 'θe', 'cé': 'θé', 'cë': 'θë',
                       'ci': 'θi', 'cí': 'θí', 'cï': 'θï', 'cj': 'θj',
-                      'c': 'k', 'ph': 'f', 'h': ''}
+                      'c': 'k', 'ph': 'f'}
         sentence = re.sub(r'(?:([nls])r|rr|\br)', r'\1R', sentence)
         sentence = sentence.replace('r', 'ɾ')
+        sentence = re.sub(r'\bh','ʰ', sentence)
         for consonant in consonants:
             if consonant in sentence:
                 sentence = sentence.replace(consonant, consonants[consonant])
+        if aspiration:
+            sentence = re.sub(r'\bh','ʰ', sentence)
+        sentence = sentence.replace('h', '')
         if 'y' in sentence:
             sentence = re.sub(r'\by\b', 'i', sentence)
             sentence = re.sub(r'y\b', 'j', sentence)
