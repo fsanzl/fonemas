@@ -10,10 +10,13 @@ class values:
     syllables: list
 
 class transcription:
-    def __init__(self, sentence, mono=False, epenthesis=False, sampastr='"'):
+    def __init__(self, sentence,
+                 mono=False, epenthesis=False, aspiration= False,
+                 sampastr='"'):
         self.__epenthesis = epenthesis
         self.__mono = mono
         self.__sampastr = sampastr
+        self.__aspiration = aspiration
         self.sentence = self.__letters(sentence)
         self.phonology = self.transcription_fnl(self.sentence)
         self.__transliteration = self.transcription_fnt(self.phonology)
@@ -30,6 +33,7 @@ class transcription:
         for letter in letters:
             sentence = re.sub(rf'\b{letter}\b', 'letters[letter]', sentence)
         return sentence
+
 
     @staticmethod
     def __clean(sentence, epenthesis):
@@ -57,16 +61,20 @@ class transcription:
                       'ú': 'u', 'ù': 'u', 'ü': 'u'}
 
         consonants = {'w': 'b', 'v': 'b', 'z': 'θ', 'x': 'ks', 'j': 'x',
-                      'ñ': 'ɲ', 'qu': 'k', 'll': 'ʎ', 'ch': 'tʃ',
+                      'ñ': 'ɲ', 'qu': 'k', 'll': 'ʎ', 'ch': 'ʧ',
                       'r': 'ɾ', 'R': 'r',
                       'ce': 'θe', 'cé': 'θé', 'cë': 'θë',
                       'ci': 'θi', 'cí': 'θí', 'cï': 'θï', 'cj': 'θj',
-                      'c': 'k', 'ph': 'f', 'h': ''}
+                      'c': 'k', 'ph': 'f'}
         sentence = re.sub(r'(?:([nls])r|rr|\br)', r'\1R', sentence)
         sentence = sentence.replace('r', 'ɾ')
+        sentence = re.sub(r'\bh', 'ʰ', sentence)
         for consonant in consonants:
             if consonant in sentence:
                 sentence = sentence.replace(consonant, consonants[consonant])
+        if self.__aspiration:
+            sentence = re.sub(r'\bh', 'ʰ', sentence)
+        sentence = sentence.replace('h', '')
         if 'y' in sentence:
             sentence = re.sub(r'\by\b', 'i', sentence)
             sentence = re.sub(r'y\b', 'j', sentence)
@@ -92,9 +100,7 @@ class transcription:
                      for word in words]
             syllables = [syllable.replace(letter, diacritics[letter]) for
                          syllable in syllables]
-        print(words, syllables)
-        a = values(words, syllables)
-        return a
+        return values(words, syllables)
 
 
     @staticmethod
