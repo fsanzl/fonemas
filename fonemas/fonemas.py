@@ -7,13 +7,13 @@ import silabeador
 class transcription:
     def __init__(self, sentence, mono=False, epenthesis=False,
                  aspiration=False, sampastr='"'):
-        self.sampastr = sampastr
+        self.__sampastr = sampastr
         self.sentence = self.__letters(self.__clean(sentence.lower(),
                                                     epenthesis))
         self.phonology = self.transcription_fnl(self.sentence, mono,
                                                 aspiration)
         self.transliteration = self.transcription_fnt(self.phonology,
-                                                      self.sampastr)
+                                                      self.__sampastr)
         self.phonetics = {'words': self.transliteration['phon_words'],
                           'syllables': self.transliteration['phon_syllables']}
         self.sampa = {'words': self.transliteration['ascii_words'],
@@ -118,12 +118,12 @@ class transcription:
                       'c': 'k', 'ph': 'f'}
         sentence = re.sub(r'(?:([nls])r|rr|\br)', r'\1R', sentence)
         sentence = sentence.replace('r', 'ɾ')
-        sentence = re.sub(r'\bh','ʰ', sentence)
+        sentence = re.sub(r'\bh', 'ʰ', sentence)
         for consonant in consonants:
             if consonant in sentence:
                 sentence = sentence.replace(consonant, consonants[consonant])
         if aspiration:
-            sentence = re.sub(r'\bh','ʰ', sentence)
+            sentence = re.sub(r'\bh', 'ʰ', sentence)
         sentence = sentence.replace('h', '')
         if 'y' in sentence:
             sentence = re.sub(r'\by\b', 'i', sentence)
