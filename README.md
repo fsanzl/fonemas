@@ -31,7 +31,7 @@ The library provides the class  *transcription(sentence, mono, epenthesis, aspir
 
 
 
-The class *transcription()* has three dictionary attributes, each with two keys *{sentence, syllables}* containing each a list of strings, which may be words or syllables, respectively.
+The class *transcription()* has three dataclass attributes, each with two attributes *{words, syllables}* containing each a list of strings, which may be words or syllables, respectively.
 
 - *phonology* for the phonological transcription (requires UNICODE support).
 
@@ -43,18 +43,27 @@ The class *transcription()* has three dictionary attributes, each with two keys 
 ```python
 >>> from fonemas import transcription
 >>> object = transcription('Averigüéis')
->>> object.phonology
-{'words': ["abeɾig'wejs"], 'syllables': ['a', 'be', 'ɾi', "'gwejs"]}
->>> object.phonetics
-{'words': ["aβe'ɾiɣwejs"], 'syllables': ['a', 'βe', "'ɾi", 'ɣwejs']}
->>> object.sampa
-{'words': "aBeri'Gwejs", 'syllables': "a Be ri 'Gwejs"}
+>>> a.phonology.words
+['abeɾiˈgwejs']
+>>> a.phonology.syllables
+['a', 'be', 'ɾi', 'ˈgwejs']
+>>> a.phonetics.words
+['aβeɾiˈɣwejs']
+>>> a.phonetics.syllables
+['a', 'be', 'ɾi', 'ˈɣwejs']
+>>> a.sampa.words
+['aBeri"Gwejs']
+>>> a.sampa.syllables
+['a', 'Be', 'ri', '"Gwejs']
 ```
 
 ## Description
 
 The transcription is done according to the Spanish phonology and phonotactics described by Quilis (2019).
 
+## Known issues
+
+The phonetic transcription lacks allophones represented in IPA with diacritics. They require double characters, which need a workaround to be evaluated. It can be solved using hacks for 'special cases', which I will do if can't figure out a general solution.
 
 ## Contributions
 
