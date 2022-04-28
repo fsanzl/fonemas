@@ -2,27 +2,25 @@ import re
 import silabeador
 from dataclasses import dataclass
 
+
 @dataclass
 class Values:
     words: list
     syllables: list
 
+
 class Transcription:
     def __init__(self, sentence,
-                 mono=False, epenthesis=False, aspiration= False,
+                 mono=False, epenthesis=False, aspiration=False,
                  sampastr='"'):
-        self.__epenthesis = epenthesis
-        self.__mono = mono
-        self.__sampastr = sampastr
-        self.__aspiration = aspiration
-        self.sentence = self.__letters(sentence)
-        self.phonology = self.transcription_fnl(self.sentence)
-        self.__transliteration = self.transcription_fnt(self.phonology)
-        self.phonetics = self.__transliteration[0]
-        self.sampa = self.__transliteration[1]
+        self.sentence = self.__letters(sentence, epenthesis)
+        self.phonology = self.transcription_fnl(self.sentence,
+                                                mono, aspiration)
+        self.phonetics = self.transcription_fnt(self.phonology)
+        self.sampa = self.ipa2sampa(self.phonetics, sampastr)
 
-    def __letters(self, sentence):
-        sentence = self.__clean(sentence.lower(), self.__epenthesis)
+    def __letters(self, sentence, epenthesis):
+        sentence = self.__clean(sentence.lower(), epenthesis)
         letters = {'b': 'be', 'c': 'ce', 'd': 'de', 'f': 'efe', 'g': 'ge',
                    'h': 'hache', 'j': 'jota', 'k': 'ka', 'l': 'ele',
                    'm': 'eme', 'n': 'ene', 'p': 'pe', 'q': 'ku',
@@ -31,7 +29,6 @@ class Transcription:
         for letter in letters:
             sentence = re.sub(rf'\b{letter}\b', 'letters[letter]', sentence)
         return sentence
-
 
     @staticmethod
     def __clean(sentence, epenthesis):
@@ -50,8 +47,7 @@ class Transcription:
             sentence = re.sub(r'\bs((?![aeiouáéíóúäëïöü]))', r'es\1', sentence)
         return sentence
 
-
-    def transcription_fnl(self, sentence):
+    def transcription_fnl(self, sentence, mono, aspiration):
         diacritics = {'á': 'a', 'à': 'a', 'ä': 'a',
                       'é': 'e', 'è': 'e', 'ë': 'e',
                       'í': 'i', 'ì': 'i', 'ï': 'i',
@@ -70,7 +66,7 @@ class Transcription:
         for consonant in consonants:
             if consonant in sentence:
                 sentence = sentence.replace(consonant, consonants[consonant])
-        if self.__aspiration:
+        if aspiration:
             sentence = re.sub(r'\bh', 'ʰ', sentence)
         sentence = sentence.replace('h', '')
         if 'y' in sentence:
@@ -90,7 +86,7 @@ class Transcription:
                 sentence = re.sub(reg[0], reg[1], sentence)
             sentence = re.sub(r'gü([ei])', r'gw\1', sentence)
             sentence = re.sub(r'gu([ao])', r'gw\1', sentence)
-        transcription = self.__splitvariables(sentence)
+        transcription = self.__split_variables(sentence, mono)
         words = transcription['words']
         syllables = transcription['syllables']
         for letter in diacritics:
@@ -100,9 +96,8 @@ class Transcription:
                          syllable in syllables]
         return Values(words, syllables)
 
-
     @staticmethod
-    def ipa2sampa(words, sampastr):
+    def ipa2sampa(ipa, sampastr):
         translation = {'a': 'a', 'e': 'e', 'i': 'i', 'o': 'o', 'u': 'u',
                        'j': 'j', 'w': 'w',
                        'b': 'b', 'β': 'B', 'd': 'd', 'ð': 'D',
@@ -113,11 +108,16 @@ class Transcription:
                        'tʃ': 'tS', 'ʝ': 'y', 'x': 'x', 'χ': '4',
                        'f': 'f', 's': 's', 'z': 'z', 'θ': 'T',
                        'ˈ': sampastr, 'ˌ': '%'}
-        for phoneme in translation:
-            words = words.replace(phoneme, translation[phoneme])
-        return words
 
-    def __splitvariables(self, sentence):
+        for phoneme in translation:
+            for idx, word in enumerate(ipa.words):
+                ipa.words[idx] = word.replace(phoneme, translation[phoneme])
+            for idx, syllable in enumerate(ipa.syllables):
+                ipa.syllables[idx] = syllable.replace(phoneme,
+                                                      translation[phoneme])
+        return ipa
+
+    def __split_variables(self, sentence, mono):
         syllabic = []
         words = []
         for word in sentence.split():
@@ -148,10 +148,10 @@ class Transcription:
                     else:
                         conta += 1
             for idx, syllable in enumerate(syllables):
-                if not self.__mono and len(syllables) == 1:
+                if not mono and len(syllables) == 1:
                     syllable = syllable.strip("ˈ")
                 syllabic += [syllable]
-            if len(syllables) == 1 and not self.__mono:
+            if len(syllables) == 1 and not mono:
                 word = word.replace('ˈ', '')
             words += [word]
         return {'words': words, 'syllables': syllabic}
@@ -185,15 +185,10 @@ class Transcription:
     def transcription_fnt(self, phonology):
         words = ' '.join(phonology.words)
         syllables = '-'.join(phonology.syllables)
-        phon_words = self.__fsubstitute(words)
-        phon_syllables = self.__fsubstitute(syllables)
-        ascii_words = self.ipa2sampa(phon_words, self.__sampastr)
-        ascii_syllables = self.ipa2sampa(phon_syllables, self.__sampastr)
-        phon = Values(self.__fsubstitute(phon_words).split(),
-                      self.__fsubstitute(phon_syllables).split())
-        ascii = Values(self.__fsubstitute(ascii_words).split(),
-                 self.__fsubstitute(ascii_syllables).split())
-        return (phon, ascii)
+        words = self.__fsubstitute(words)
+        syllables = self.__fsubstitute(syllables)
+        return Values(self.__fsubstitute(words).split(),
+                      self.__fsubstitute(syllables).split())
 
     @staticmethod
     def __replace_ocurrence(string, origin, to, num):
