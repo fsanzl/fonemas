@@ -1,6 +1,6 @@
 import re
 import silabeador
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 
 @dataclass
@@ -10,12 +10,10 @@ class Values:
 
 
 class Transcription:
-    def __init__(self, sentence,
-                 mono=False, epenthesis=False, aspiration=False,
+    def __init__(self, sentence, mono=False, epenthesis=False, aspiration=False,
                  sampastr='"'):
         self.sentence = self.__letters(sentence, epenthesis)
-        self.phonology = self.transcription_fnl(self.sentence,
-                                                mono, aspiration)
+        self.phonology = self.transcription_fnl(self.sentence, mono, aspiration)
         self.phonetics = self.transcription_fnt(self.phonology)
         self.sampa = self.ipa2sampa(self.phonetics, sampastr)
 
@@ -98,23 +96,24 @@ class Transcription:
 
     @staticmethod
     def ipa2sampa(ipa, sampastr):
-        translation = {'a': 'a', 'e': 'e', 'i': 'i', 'o': 'o', 'u': 'u',
-                       'j': 'j', 'w': 'w',
-                       'b': 'b', 'β': 'B', 'd': 'd', 'ð': 'D',
-                       'g': 'g', 'ɣ': 'G',
-                       'p': 'p', 't': 't', 'k': 'k',
-                       'l': 'l', 'ʎ': 'L', 'r': 'rr', 'ɾ': 'r',
-                       'm': 'm', 'ɱ': 'M', 'n': 'n', 'ŋ': 'N', 'ɲ': 'J',
-                       'tʃ': 'tS', 'ʝ': 'y', 'x': 'x', 'χ': '4',
-                       'f': 'f', 's': 's', 'z': 'z', 'θ': 'T',
-                       'ˈ': sampastr, 'ˌ': '%'}
+        ipa = Values(ipa.words.copy(), ipa.syllables.copy())
+        transliteration = {'a': 'a', 'e': 'e', 'i': 'i', 'o': 'o', 'u': 'u',
+                           'j': 'j', 'w': 'w',
+                           'b': 'b', 'β': 'B', 'd': 'd', 'ð': 'D',
+                           'g': 'g', 'ɣ': 'G',
+                           'p': 'p', 't': 't', 'k': 'k',
+                           'l': 'l', 'ʎ': 'L', 'r': 'rr', 'ɾ': 'r',
+                           'm': 'm', 'ɱ': 'M', 'n': 'n', 'ŋ': 'N', 'ɲ': 'J',
+                           'ʧ': 'tS', 'ʝ': 'y', 'x': 'x', 'χ': '4',
+                           'f': 'f', 's': 's', 'z': 'z', 'θ': 'T',
+                           'ˈ': sampastr, 'ˌ': '%'}
 
-        for phoneme in translation:
+        for symbol in transliteration:
             for idx, word in enumerate(ipa.words):
-                ipa.words[idx] = word.replace(phoneme, translation[phoneme])
+                ipa.words[idx] = word.replace(symbol, transliteration[symbol])
             for idx, syllable in enumerate(ipa.syllables):
-                ipa.syllables[idx] = syllable.replace(phoneme,
-                                                      translation[phoneme])
+                ipa.syllables[idx] = syllable.replace(symbol,
+                                                      transliteration[symbol])
         return ipa
 
     def __split_variables(self, sentence, mono):
