@@ -1,15 +1,13 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 import re
 import silabeador
 from dataclasses import dataclass
 
 @dataclass
-class values:
+class Values:
     words: list
     syllables: list
 
-class transcription:
+class Transcription:
     def __init__(self, sentence,
                  mono=False, epenthesis=False, aspiration= False,
                  sampastr='"'):
@@ -100,7 +98,7 @@ class transcription:
                      for word in words]
             syllables = [syllable.replace(letter, diacritics[letter]) for
                          syllable in syllables]
-        return values(words, syllables)
+        return Values(words, syllables)
 
 
     @staticmethod
@@ -191,9 +189,9 @@ class transcription:
         phon_syllables = self.__fsubstitute(syllables)
         ascii_words = self.ipa2sampa(phon_words, self.__sampastr)
         ascii_syllables = self.ipa2sampa(phon_syllables, self.__sampastr)
-        phon = values(self.__fsubstitute(phon_words).split(),
+        phon = Values(self.__fsubstitute(phon_words).split(),
                       self.__fsubstitute(phon_syllables).split())
-        ascii = values(self.__fsubstitute(ascii_words).split(),
+        ascii = Values(self.__fsubstitute(ascii_words).split(),
                  self.__fsubstitute(ascii_syllables).split())
         return (phon, ascii)
 
@@ -214,8 +212,8 @@ class transcription:
         for idx, syllable in enumerate(syllables):
             if re.search(r'[aeiouáéíóú]{2,}', syllable):
                 i += 1
-                syllable = re.sub(r'([aeouáééóú])i', r'\1j', syllable)
-                syllable = re.sub(r'([aeoiáééóú])u', r'\1w', syllable)
+                syllable = re.sub(r'([aeoáééóú])i', r'\1j', syllable)
+                syllable = re.sub(r'([aeoáééóú])u', r'\1w', syllable)
                 word = self.__replace_ocurrence(word,
                                                 syllables[idx],
                                                 syllable, i)
