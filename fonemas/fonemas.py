@@ -34,7 +34,7 @@ class Transcription:
                    '[', ']',
                    '—', '…', ',', ';', ':', "'", '.', '–', '—', '"', '-']
         letters = {'õ': 'o', 'æ': 'ae',
-                   'à': 'a', 'è': 'e', 'ì': 'i', 'ò': 'o', 'ù': 'u'}
+                   'à': 'a', 'è': 'e', 'ì': 'i', 'ò': 'o', 'ù': 'u', 'ç': 's'}
         for x in symbols:
             if x in sentence:
                 sentence = sentence.replace(x, ' ')
