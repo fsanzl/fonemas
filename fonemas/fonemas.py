@@ -17,6 +17,27 @@ class Transcription:
         self.phonetics = self.transcription_fnt(self.phonology)
         self.sampa = self.ipa2sampa(self.phonetics, sampastr)
 
+    @staticmethod
+    def __clean(sentence, epenthesis):
+        symbols = ['(', ')', '¿', '?', '¡', '!', '«', '»', '“', '”', '‘', '’',
+                   '[', ']',
+                   '—', '…', ',', ';', ':', "'", '.', '–', '"', '-']
+        letters = {'õ': 'o', 'æ': 'e',
+                   ' à ': ' a ', ' ò ': 'o',
+                   'à': 'á', 'è': 'é', 'ì': 'í', 'ò': 'ó', 'ù': 'ú',
+                   'ö': '_o', 'ä': '_a', 'ë': '_e', 'ï': '_i',
+                   'â': 'a', 'ê': 'e', 'î': 'i', 'ô': 'o', 'û': 'u',
+                   'ç': 's'}
+        for x in symbols:
+            if x in sentence:
+                sentence = sentence.replace(x, ' ')
+        for x in letters:
+            if x in sentence:
+                sentence = sentence.replace(x, letters[x])
+        if epenthesis:
+            sentence = re.sub(r'\bs((?![aeiouáéíóúäëïöü]))', r'es\1', sentence)
+        return sentence
+
     def __letters(self, sentence, epenthesis):
         sentence = self.__clean(sentence.lower(), epenthesis)
         letters = {'b': 'be', 'c': 'ce', 'd': 'de', 'f': 'efe', 'g': 'ge',
@@ -28,29 +49,13 @@ class Transcription:
             sentence = re.sub(rf'\b{letter}\b', 'letters[letter]', sentence)
         return sentence
 
-    @staticmethod
-    def __clean(sentence, epenthesis):
-        symbols = ['(', ')', '¿', '?', '¡', '!', '«', '»', '“', '”', '‘', '’',
-                   '[', ']',
-                   '—', '…', ',', ';', ':', "'", '.', '–', '—', '"', '-']
-        letters = {'õ': 'o', 'æ': 'ae',
-                   'à': 'a', 'è': 'e', 'ì': 'i', 'ò': 'o', 'ù': 'u', 'ç': 's'}
-        for x in symbols:
-            if x in sentence:
-                sentence = sentence.replace(x, ' ')
-        for x in letters:
-            if x in sentence:
-                sentence = sentence.replace(x, letters[x])
-        if epenthesis:
-            sentence = re.sub(r'\bs((?![aeiouáéíóúäëïöü]))', r'es\1', sentence)
-        return sentence
-
     def transcription_fnl(self, sentence, mono, aspiration):
         diacritics = {'á': 'a', 'à': 'a', 'ä': 'a',
                       'é': 'e', 'è': 'e', 'ë': 'e',
                       'í': 'i', 'ì': 'i', 'ï': 'i',
                       'ó': 'o', 'ò': 'o', 'ö': 'o',
-                      'ú': 'u', 'ù': 'u', 'ü': 'u'}
+                      'ú': 'u', 'ù': 'u', 'ü': 'u',
+                      '_': ''}
 
         consonants = {'w': 'b', 'v': 'b', 'z': 'θ', 'x': 'ks', 'j': 'x',
                       'ñ': 'ɲ', 'qu': 'k', 'll': 'ʎ', 'ch': 'ʧ',
