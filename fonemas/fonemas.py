@@ -1,5 +1,5 @@
 import re
-import silabeador
+from silabeador import Syllabification
 from dataclasses import dataclass, replace
 
 
@@ -10,68 +10,52 @@ class Values:
 
 
 class Transcription:
-    def __init__(self, sentence, mono=False, epenthesis=False, aspiration=False,
-                 sampastr='"'):
-        self.sentence = self.__letters(sentence, epenthesis)
+    def __init__(self, sentence, mono=False, epenthesis=False, aspiration=False, stress='"'):
+        self.sentence = self.__clean(sentence, epenthesis)
         self.phonology = self.transcription_fnl(self.sentence, mono, aspiration)
         self.phonetics = self.transcription_fnt(self.phonology)
-        self.sampa = self.ipa2sampa(self.phonetics, sampastr)
+        self.sampa = self.ipa2sampa(self.phonetics, stress)
 
     @staticmethod
-    def __clean(sentence, epenthesis):
+    def __clean(raw_sentence, epen):
+        letters = {'b': 'be', 'c': 'θe', 'd': 'de', 'f': 'efe', 'g': 'ge', 'h': 'haʧe',
+                   'j': 'jota', 'k': 'ka', 'l': 'ele', 'm': 'eme', 'n': 'ene', 'p': 'pe',
+                   'q': 'ku', 'r': 'erre', 's': 'ese', 't': 'te', 'v': 'ube', 'w': 'ubedoble',
+                   'x': 'ekis', 'z': 'θeta', 'ph': 'peaʧe'}
         symbols = ['(', ')', '¿', '?', '¡', '!', '«', '»', '“', '”', '‘', '’',
-                   '[', ']',
-                   '—', '…', ',', ';', ':', "'", '.', '–', '"', '-']
-        letters = {'õ': 'o', 'æ': 'e',
-                   ' à ': ' a ', ' ò ': 'o',
-                   'à': 'á', 'è': 'é', 'ì': 'í', 'ò': 'ó', 'ù': 'ú',
-                   'ö': '_o', 'ä': '_a', 'ë': '_e', 'ï': '_i',
-                   'â': 'a', 'ê': 'e', 'î': 'i', 'ô': 'o', 'û': 'u',
-                   'ç': 's'}
-        for x in symbols:
-            if x in sentence:
-                sentence = sentence.replace(x, ' ')
-        for x in letters:
-            if x in sentence:
-                sentence = sentence.replace(x, letters[x])
-        if epenthesis:
-            sentence = re.sub(r'\bs((?![aeiouáéíóúäëïöü]))', r'es\1', sentence)
-        return sentence
-
-    def __letters(self, sentence, epenthesis):
-        sentence = self.__clean(sentence.lower(), epenthesis)
-        letters = {'b': 'be', 'c': 'ce', 'd': 'de', 'f': 'efe', 'g': 'ge',
-                   'h': 'hache', 'j': 'jota', 'k': 'ka', 'l': 'ele',
-                   'm': 'eme', 'n': 'ene', 'p': 'pe', 'q': 'ku',
-                   'r': 'erre', 's': 'ese', 't': 'te', 'v': 'ube',
-                   'w': 'ubedoble', 'x': 'ekis', 'z': 'ceta', 'ph': 'peache'}
-        for letter in letters:
-            sentence = re.sub(rf'\b{letter}\b', 'letters[letter]', sentence)
-        return sentence
+                   '[', ']', '—', '…', ',', ';', ':', "'", '.', '–', '"', '-']
+        diacritics = { 'à': 'á', 'è': 'é', 'ì': 'í', 'ò': 'ó', 'ù': 'ú',
+                      'ã': 'á',  'ä': '_a', 'õ': 'ó',  'ö': '_o',  'ë': '_e', 'ï': '_i',
+                      'æ': 'e', 'â': 'a', 'ê': 'e', 'î': 'i', 'ô': 'o', 'û': 'u', 'ç': 'θ'}
+        raw_sentence = raw_sentence.lower()
+        for character in letters:
+            if re.match(rf'\b{character}\b', raw_sentence):
+                raw_sentence = re.sub(rf'\b{character}\b', 'letters[character]', raw_sentence)
+        for character in symbols:
+            if character in raw_sentence:
+                raw_sentence = raw_sentence.replace(character, ' ')
+        for character in diacritics:
+            if character in raw_sentence:
+                raw_sentence = raw_sentence.replace(character, letters[character])
+        if epen:
+            raw_sentence = re.sub(r'\bs((?![aeiouáéíóú]))', r'es\1', raw_sentence)
+        return raw_sentence
 
     def transcription_fnl(self, sentence, mono, aspiration):
-        diacritics = {'á': 'a', 'à': 'a', 'ä': 'a',
-                      'é': 'e', 'è': 'e', 'ë': 'e',
-                      'í': 'i', 'ì': 'i', 'ï': 'i',
-                      'ó': 'o', 'ò': 'o', 'ö': 'o',
-                      'ú': 'u', 'ù': 'u', 'ü': 'u',
-                      '_': ''}
-
+        diacritics = {'á': 'a', 'à': 'a', 'ä': 'a', 'é': 'e', 'è': 'e', 'ë': 'e',
+                      'í': 'i', 'ì': 'i', 'ï': 'i', 'ó': 'o', 'ò': 'o', 'ö': 'o',
+                      'ú': 'u', 'ù': 'u', 'ü': 'u', '_': ''}
         consonants = {'w': 'b', 'v': 'b', 'z': 'θ', 'x': 'ks', 'j': 'x',
                       'ñ': 'ɲ', 'qu': 'k', 'll': 'ʎ', 'ch': 'ʧ',
-                      'r': 'ɾ', 'R': 'r',
                       'ce': 'θe', 'cé': 'θé', 'cë': 'θë',
                       'ci': 'θi', 'cí': 'θí', 'cï': 'θï', 'cj': 'θj',
-                      'c': 'k', 'ph': 'f'}
-        sentence = re.sub(r'(?:([nls])r|rr|\br)', r'\1R', sentence)
-        sentence = sentence.replace('r', 'ɾ')
-        sentence = re.sub(r'\bh', 'ʰ', sentence)
+                      'c': 'k', 'ph': 'f', 'r': 'ɾ', 'R': 'r', 'h': ''}
+        sentence = re.sub(r'(?:([nls])r|\br|rr)', r'\1R', sentence)
+        if aspiration:
+            sentence = re.sub(r'\bh', 'ʰ', sentence)
         for consonant in consonants:
             if consonant in sentence:
                 sentence = sentence.replace(consonant, consonants[consonant])
-        if aspiration:
-            sentence = re.sub(r'\bh', 'ʰ', sentence)
-        sentence = sentence.replace('h', '')
         if 'y' in sentence:
             sentence = re.sub(r'\by\b', 'i', sentence)
             sentence = re.sub(r'y\b', 'j', sentence)
@@ -79,86 +63,65 @@ class Transcription:
             for key, value in diacritics.items():
                 if key in 'áéíóú':
                     sentence = re.sub(rf'{value}ʝ\b', f'{key}i', sentence)
-            # sentence = re.sub(r'y', 'ʝ', sentence)
-            # sentence = re.sub(r'ʝ\b', 'i', sentence)
             sentence = re.sub(r'ʝ((?![aeiouáéíóú]))', r'i\1', sentence)
         if 'g' in sentence:
-            for reg in [
-                [r'g([eiéíiëï])', rf'x\1'],
-                    [r'g[u]([eiéíëï])', rf'g\1']]:
+            for reg in [[r'g([eiéíiëï])', rf'x\1'], [r'g[u]([eiéíëï])', rf'g\1']]:
                 sentence = re.sub(reg[0], reg[1], sentence)
             sentence = re.sub(r'gü([ei])', r'gw\1', sentence)
             sentence = re.sub(r'gu([ao])', r'gw\1', sentence)
         transcription = self.__split_variables(sentence, mono)
-        words = transcription['words']
-        syllables = transcription['syllables']
         for letter in diacritics:
-            words = [word.replace(letter, diacritics[letter])
-                     for word in words]
-            syllables = [syllable.replace(letter, diacritics[letter]) for
-                         syllable in syllables]
-        return Values(words, syllables)
-
-    @staticmethod
-    def ipa2sampa(ipa, sampastr):
-        ipa = Values(ipa.words.copy(), ipa.syllables.copy())
-        transliteration = {'a': 'a', 'e': 'e', 'i': 'i', 'o': 'o', 'u': 'u',
-                           'j': 'j', 'w': 'w',
-                           'b': 'b', 'β': 'B', 'd': 'd', 'ð': 'D',
-                           'g': 'g', 'ɣ': 'G',
-                           'p': 'p', 't': 't', 'k': 'k',
-                           'l': 'l', 'ʎ': 'L', 'r': 'rr', 'ɾ': 'r',
-                           'm': 'm', 'ɱ': 'M', 'n': 'n', 'ŋ': 'N', 'ɲ': 'J',
-                           'ʧ': 'tS', 'ʝ': 'y', 'x': 'x', 'χ': '4',
-                           'f': 'f', 's': 's', 'z': 'z', 'θ': 'T',
-                           'ˈ': sampastr, 'ˌ': '%'}
-
-        for symbol in transliteration:
-            for idx, word in enumerate(ipa.words):
-                ipa.words[idx] = word.replace(symbol, transliteration[symbol])
-            for idx, syllable in enumerate(ipa.syllables):
-                ipa.syllables[idx] = syllable.replace(symbol,
-                                                      transliteration[symbol])
-        return ipa
+            transcription.words = [word.replace(letter, diacritics[letter]) for word in transcription.words]
+            transcription.syllables = [syllable.replace(letter, diacritics[letter]) for syllable in transcription.syllables]
+        return transcription
 
     def __split_variables(self, sentence, mono):
-        syllabic = []
         words = []
+        syllables_sentence = []
         for word in sentence.split():
             if len(word) > 5 and word.endswith('mente'):
-                syllabification = silabeador.syllabification(
-                    word[:-5], True, True)
+                syllabification = Syllabification(word[:-5], True, True)
                 syllables = syllabification.syllables
                 if len(syllables) > 1:
                     syllables = syllables + ['ˌmen', 'te']
                     stress = syllabification.stress - 2
                     word = word.replace('mente', 'ˌmente')
                 else:
-                    syllables = syllables + ["ˈmen", 'te']
+                    syllables = syllables + ['ˈmen', 'te']
                     stress = -2
             else:
-                syllabification = silabeador.syllabification(word, True, True)
+                syllabification = Syllabification(word, True, True)
                 syllables = syllabification.syllables
                 stress = syllabification.stress
-            conta = 0
-            diph = self.__diphthongs(word, syllables)
-            word = diph['word']
-            syllables = diph['syllables']
-            syllables[stress] = f"ˈ{syllables[stress]}"
-            for idx, slb in enumerate(syllables):
-                for char in slb:
-                    if char == "ˈ":
-                        word = word[:conta] + "ˈ" + word[conta:]
-                    else:
-                        conta += 1
-            for idx, syllable in enumerate(syllables):
+            syllables = self.__diphthongs(word, syllables)
+            syllables[stress] = f'ˈ{syllables[stress]}'
+            word = ''
+            for syllable in syllables:
                 if not mono and len(syllables) == 1:
-                    syllable = syllable.strip("ˈ")
-                syllabic += [syllable]
-            if len(syllables) == 1 and not mono:
-                word = word.replace('ˈ', '')
-            words += [word]
-        return {'words': words, 'syllables': syllabic}
+                    syllable = syllable.strip('ˈ')
+                syllables_sentence.append(syllable)
+                word += syllable
+            words.append(word)
+        return Values(words, syllables_sentence)
+
+    def __diphthongs(self, word, syllables):
+        for idx, syllable in enumerate(syllables):
+            if re.search(r'[aeiou]{2,}', syllable):
+                syllable = re.sub(r'i([aeou])', r'j\1', syllable)
+                syllable = re.sub(r'u([aeio])', r'w\1', syllable)
+            if re.search(r'[ui][aeioui]', syllable):
+                syllable = re.sub(r'([aeo])i', r'\1j', syllable)
+                syllable = re.sub(r'([aeo])u', r'\1w', syllable)
+            syllables[idx] = syllable
+        return syllables
+
+    def transcription_fnt(self, phonology):
+        words = ' '.join(phonology.words)
+        syllables = '-'.join(phonology.syllables)
+        words = self.__fsubstitute(words)
+        syllables = self.__fsubstitute(syllables)
+        return Values(self.__fsubstitute(words).split(),
+                      self.__fsubstitute(syllables).split())
 
     @staticmethod
     def __fsubstitute(words):
@@ -195,33 +158,23 @@ class Transcription:
                       self.__fsubstitute(syllables).split())
 
     @staticmethod
-    def __replace_ocurrence(string, origin, to, num):
-        strange_char = '$&$@$$&'
-        if string.count(origin) < 0:
-            return string
-        elif string.count(origin) > 1:
-            return string.replace(origin, strange_char, num).replace(
-                strange_char, origin, num-1).replace(to, strange_char, 1)
-        else:
-            return string.replace(origin, to)
+    def ipa2sampa(ipa, sampastr):
+        ipa = Values(ipa.words.copy(), ipa.syllables.copy())
+        transliteration = {'a': 'a', 'e': 'e', 'i': 'i', 'o': 'o', 'u': 'u',
+                           'j': 'j', 'w': 'w',
+                           'b': 'b', 'β': 'B', 'd': 'd', 'ð': 'D',
+                           'g': 'g', 'ɣ': 'G',
+                           'p': 'p', 't': 't', 'k': 'k',
+                           'l': 'l', 'ʎ': 'L', 'r': 'rr', 'ɾ': 'r',
+                           'm': 'm', 'ɱ': 'M', 'n': 'n', 'ŋ': 'N', 'ɲ': 'J',
+                           'ʧ': 'tS', 'ʝ': 'y', 'x': 'x', 'χ': '4',
+                           'f': 'f', 's': 's', 'z': 'z', 'θ': 'T',
+                           'ˈ': sampastr, 'ˌ': '%'}
 
-    def __diphthongs(self, word, syllables):
-        i = 0
-        j = 0
-        for idx, syllable in enumerate(syllables):
-            if re.search(r'[aeiouáéíóú]{2,}', syllable):
-                i += 1
-                syllable = re.sub(r'([aeoáééóú])i', r'\1j', syllable)
-                syllable = re.sub(r'([aeoáééóú])u', r'\1w', syllable)
-                word = self.__replace_ocurrence(word,
-                                                syllables[idx],
-                                                syllable, i)
-            if re.search(r'[ui][aeiouáééiíóú]', syllable):
-                j += 1
-                syllable = re.sub(r'i([aeouáééiíóú])', r'j\1', syllable)
-                syllable = re.sub(r'u([aeioáééiíóú])', r'w\1', syllable)
-                word = self.__replace_ocurrence(word,
-                                                syllables[idx],
-                                                syllable, j)
-            syllables[idx] = syllable
-        return {'word': word, 'syllables': syllables}
+        for symbol in transliteration:
+            for idx, word in enumerate(ipa.words):
+                ipa.words[idx] = word.replace(symbol, transliteration[symbol])
+            for idx, syllable in enumerate(ipa.syllables):
+                ipa.syllables[idx] = syllable.replace(symbol,
+                                                      transliteration[symbol])
+        return ipa
