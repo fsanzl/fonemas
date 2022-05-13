@@ -19,13 +19,15 @@ pip3 install fonemas
 
 ## Use
 
-The library provides the class  *transcription(sentence, mono, epenthesis, aspiration, sampastr)*. The class takes the obligatoy argument *sentence*, which is a string of characters with a Spanish word or words. It optionally takes two Boolean arguments *mono*,  *epenthesis* and *aspiration* set to False as default.
+The library provides the class  *transcription(sentence, mono, epenthesis, aspiration, rehash, sampastr)*. The class takes the obligatoy argument *sentence*, which is a string of characters with a Spanish word or words. It optionally takes two Boolean arguments *mono*,  *epenthesis* and *aspiration* set to False as default.
 
 - *mono* sets whether the output shows graphic stresses for monosyllabic words
 
 - *epenthesis* set the behaviour S bfore consonant in onset (spiritu -> es pi ri tu|spi ri tu)
 
 - *aspiration* inserts an aspiration modifier 'ʰ' in onset. This may be useful when dealing with ambiguous verses in classic poetry to choose which synaloepha to break.
+
+- *rehash* moves last consonan on last-syllable coda to next's words first-syllable onset if it begins with a vowel.
 
 - *sampastr* allows an alternativestress symbol, as '"' to prevent issues e.g. when using in a CSV file.
 
