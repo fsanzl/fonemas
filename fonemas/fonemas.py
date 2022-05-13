@@ -10,7 +10,7 @@ class Values:
 
 
 class Transcription:
-    def __init__(self, mono = False, ephentesis = False, aspiration = False, rehash = False, stress = '"'):
+    def __init__(self, sentence, mono = False, epenthesis = False, aspiration = False, rehash = False, stress = '"'):
         self.sentence = self.__clean(sentence, epenthesis)
         if rehash:
             self.sentence = self.make_rehash(sentence)
