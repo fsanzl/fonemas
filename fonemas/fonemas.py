@@ -10,7 +10,8 @@ class Values:
 
 
 class Transcription:
-    def __init__(self, sentence, mono = False, epenthesis = False, aspiration = False, rehash = False, stress = '"'):
+    def __init__(self, sentence, mono = False, epenthesis = False,
+                 aspiration = False, rehash = False, stress = '"'):
         self.sentence = self.__clean(sentence, epenthesis)
         if rehash:
             self.sentence = self.make_rehash(sentence)
@@ -20,26 +21,27 @@ class Transcription:
 
     @staticmethod
     def __clean(raw_sentence, epen):
-        letters = {'b': 'be', 'c': 'θe', 'd': 'de', 'f': 'efe', 'g': 'ge', 'h': 'haʧe', 'j': 'jota',
-                   'k': 'ka', 'l': 'ele', 'm': 'eme', 'n': 'ene', 'p': 'pe', 'q': 'ku', 'r': 'erre',
-                   's': 'ese', 't': 'te', 'v': 'ube', 'w': 'ubedoble', 'x': 'ekis', 'z': 'θeta'}
+        letters = {'b': 'be', 'c': 'θe', 'd': 'de', 'f': 'efe', 'g': 'ge',
+                   'h': 'haʧe', 'j': 'jota', 'k': 'ka', 'l': 'ele', 'm': 'eme',
+                   'n': 'ene', 'p': 'pe', 'q': 'ku', 'r': 'erre', 's': 'ese',
+                   't': 'te', 'v': 'ube', 'w': 'ubedoble', 'x': 'ekis', 'z': 'θeta'}
         symbols = ['(', ')', '¿', '?', '¡', '!', '«', '»', '“', '”', '‘', '’',
                    '[', ']', '—', '…', ',', ';', ':', "'", '.', '–', '"', '-']
-        diacritics = { 'à': 'á', 'è': 'é', 'ì': 'í', 'ò': 'ó', 'ù': 'ú',
-                      'ã': 'á',  'ä': '_a', 'õ': 'ó',  'ö': '_o',  'ë': '_e', 'ï': '_i',
-                      'æ': 'e', 'â': 'a', 'ê': 'e', 'î': 'i', 'ô': 'o', 'û': 'u', 'ç': 'θ'}
+        diacritics = { 'à': 'á', 'è': 'é', 'ì': 'í', 'ò': 'ó', 'ù': 'ú', 'æ': 'e',
+                      'ä': '_a', 'ë': '_e', 'ï': '_i',  'ö': '_o', 'ã': 'á', 'õ': 'ó',
+                      'â': 'a', 'ê': 'e', 'î': 'i', 'ô': 'o', 'û': 'u', 'ç': 'θ'}
         raw_sentence = raw_sentence.lower()
-        for character in letters:
-            if re.search(rf'\b{character}\b', raw_sentence):
-                raw_sentence = re.sub(rf'\b{character}\b', letters[character], raw_sentence)
+        for char in letters:
+            if re.search(rf'\b{char}\b', raw_sentence):
+                raw_sentence = re.sub(rf'\b{char}\b', letters[char], raw_sentence)
         for match in letters:
-            raw_sentence = re.sub(rf'\b{match}\b', letters[character], raw_sentence)
-        for character in symbols:
-            if character in raw_sentence:
-                raw_sentence = raw_sentence.replace(character, ' ')
-        for character in diacritics:
-            if character in raw_sentence:
-                raw_sentence = raw_sentence.replace(character, letters[character])
+            raw_sentence = re.sub(rf'\b{match}\b', letters[char], raw_sentence)
+        for char in symbols:
+            if char in raw_sentence:
+                raw_sentence = raw_sentence.replace(char, ' ')
+        for char in diacritics:
+            if char in raw_sentence:
+                raw_sentence = raw_sentence.replace(char, letters[char])
         if epen:
             raw_sentence = re.sub(r'\bs((?![aeiouáéíóú]))', r'es\1', raw_sentence)
         return raw_sentence
@@ -55,11 +57,13 @@ class Transcription:
         return sentence
 
     def transcription_fnl(self, sentence, mono, aspiration):
-        diacritics = {'á': 'a', 'à': 'a', 'ä': 'a', 'é': 'e', 'è': 'e', 'ë': 'e', 'ú': 'u', 'ù': 'u',
-                      'í': 'i', 'ì': 'i', 'ï': 'i', 'ó': 'o', 'ò': 'o', 'ö': 'o',  'ü': 'u', '_': ''}
-        consonants = {'w': 'b', 'v': 'b', 'z': 'θ', 'ñ': 'ɲ', 'x': 'ks', 'j': 'x', 'r': 'ɾ', 'R': 'r',
-                      'ce': 'θe', 'cé': 'θé', 'cë': 'θë', 'ci': 'θi', 'cí': 'θí', 'cï': 'θï', 'cj': 'θj',
-                      'ch': 'ʧ', 'c': 'k', 'qu': 'k', 'll': 'ʎ', 'r': 'ɾ', 'R': 'r', 'ph': 'f', 'h': ''}
+        diacritics = {'á': 'a', 'à': 'a', 'ä': 'a', 'é': 'e', 'è': 'e', 'ë': 'e',
+                      'ú': 'u', 'ù': 'u',  'ü': 'u', 'í': 'i', 'ì': 'i', 'ï': 'i',
+                      'ó': 'o', 'ò': 'o', 'ö': 'o',  '_': ''}
+        consonants = {'w': 'b', 'v': 'b', 'z': 'θ', 'ñ': 'ɲ', 'x': 'ks', 'j': 'x',
+                      'r': 'ɾ', 'R': 'r', 'ce': 'θe', 'cé': 'θé', 'cë': 'θë',
+                      'ci': 'θi', 'cí': 'θí', 'cï': 'θï', 'cj': 'θj', 'ch': 'ʧ',
+                      'c': 'k', 'qu': 'k', 'll': 'ʎ', 'ph': 'f', 'h': ''}
         sentence = re.sub(r'(?:([nls])r|\br|rr)', r'\1R', sentence)
         if aspiration:
             sentence = re.sub(r'\bh', 'ʰ', sentence)
@@ -81,8 +85,10 @@ class Transcription:
             sentence = re.sub(r'gu([ao])', r'gw\1', sentence)
         transcription = self.__split_variables(sentence, mono)
         for letter in diacritics:
-            transcription.words = [word.replace(letter, diacritics[letter]) for word in transcription.words]
-            transcription.syllables = [syllable.replace(letter, diacritics[letter]) for syllable in transcription.syllables]
+            transcription.words = [word.replace(letter, diacritics[letter])
+                                   for word in transcription.words]
+            transcription.syllables = [syllable.replace(letter, diacritics[letter])
+                                       for syllable in transcription.syllables]
         return transcription
 
     def __split_variables(self, sentence, mono):
@@ -139,10 +145,12 @@ class Transcription:
         words = re.sub(r'θ(\-*)([bdgβðɣmnɲlʎrɾ])', r'ð\1\2', words)
         words = re.sub(r's(\-*)([bdgβðɣmnɲlʎrɾ])', r'z\1\2', words)
         words = re.sub(r'f(\-*)([bdgβðɣmnɲʎ])', r'v\1\2', words)
-        allophones = {'nb': 'mb', 'nˈb': 'mˈb', 'nf': 'ɱf', 'nˈf': 'ɱˈf', 'nk': 'ŋk', 'nˈk': 'ŋˈk',
-                      'ng': 'ŋg', 'nˈg': 'ŋˈg', 'nx': 'ŋx', 'nˈx': 'ŋˈx', 'xu': 'χu', 'xo': 'χo',
-                      'xw': 'χw', 'n-b': 'm-b', 'n-ˈb': 'm-ˈb', 'n-f': 'ɱ-f', 'n-ˈf': 'ɱ-ˈf', 'n-k': 'ŋ-k',
-                      'n-ˈk': 'ŋ-ˈk', 'n-g': 'ŋ-g', 'n-ˈg': 'ŋ-ˈg', 'n-x': 'ŋ-x', 'n-ˈx': 'ŋ-ˈx'}
+        allophones = {'nb': 'mb', 'nˈb': 'mˈb', 'nf': 'ɱf', 'nˈf': 'ɱˈf',
+                      'nk': 'ŋk', 'nˈk': 'ŋˈk', 'ng': 'ŋg', 'nˈg': 'ŋˈg',
+                      'nx': 'ŋx', 'nˈx': 'ŋˈx', 'xu': 'χu', 'xo': 'χo', 'xw': 'χw',
+                      'n-b': 'm-b', 'n-ˈb': 'm-ˈb', 'n-f': 'ɱ-f', 'n-ˈf': 'ɱ-ˈf',
+                      'n-k': 'ŋ-k', 'n-ˈk': 'ŋ-ˈk', 'n-g': 'ŋ-g', 'n-ˈg': 'ŋ-ˈg',
+                      'n-x': 'ŋ-x', 'n-ˈx': 'ŋ-ˈx'}
         if any(allophone in words for allophone in allophones):
             for allophone in allophones:
                 words = words.replace(allophone, allophones[allophone])
@@ -151,12 +159,9 @@ class Transcription:
     @staticmethod
     def ipa2sampa(ipa, sampastr):
         ipa = Values(ipa.words.copy(), ipa.syllables.copy())
-        transliteration = {'a': 'a', 'e': 'e', 'i': 'i', 'o': 'o', 'u': 'u', 'j': 'j', 'w': 'w',
-                           'b': 'b', 'β': 'B', 'd': 'd', 'ð': 'D', 'g': 'g', 'ɣ': 'G',
-                           'p': 'p', 't': 't', 'k': 'k', 'l': 'l', 'ʎ': 'L', 'r': 'rr', 'ɾ': 'r',
-                           'm': 'm', 'ɱ': 'M', 'n': 'n', 'ŋ': 'N', 'ɲ': 'J', 'ʧ': 'tS',
-                           'ʝ': 'y', 'x': 'x', 'χ': '4', 'f': 'f', 's': 's', 'z': 'z', 'θ': 'T',
-                           'ˈ': sampastr, 'ˌ': '%'}
+        transliteration = {'β': 'B', 'ð': 'D', 'ɣ': 'G', 'ʎ': 'L', 'r': 'rr',
+                           'ɾ': 'r', 'ɱ': 'M', 'ŋ': 'N', 'ɲ': 'J', 'ʧ': 'tS',
+                           'ʝ': 'y', 'χ': '4', 'θ': 'T', 'ˈ': sampastr, 'ˌ': '%'}
         for symbol in transliteration:
             for idx, word in enumerate(ipa.words):
                 ipa.words[idx] = word.replace(symbol, transliteration[symbol])
