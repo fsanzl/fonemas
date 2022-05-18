@@ -51,7 +51,7 @@ class Transcription:
         vowels = 'aeioujwăĕŏ'
         for idx, syllable in enumerate(sentence):
             if idx > 0:
-                if syllable[0].lower() in vowels and sentence[idx-1][-1] not in vowels:
+                if syllable[0].lower() in vowels and sentence[idx-1][-1].lower() not in vowels:
                     sentence[idx] = sentence[idx -1][-1] + syllable
                     sentence[idx -1] = sentence[idx -1][:-1]
         return sentence
