@@ -41,7 +41,7 @@ class Transcription:
                 raw_sentence = raw_sentence.replace(char, ' ')
         for char in diacritics:
             if char in raw_sentence:
-                raw_sentence = raw_sentence.replace(char, letters[char])
+                raw_sentence = raw_sentence.replace(char, diacritics[char])
         if epen:
             raw_sentence = re.sub(r'\bs((?![aeiouáéíóú]))', r'es\1', raw_sentence)
         return raw_sentence
