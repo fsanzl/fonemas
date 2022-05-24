@@ -84,10 +84,10 @@ class Transcription:
             sentence = re.sub(r'gü([ei])', r'gw\1', sentence)
             sentence = re.sub(r'gu([ao])', r'gw\1', sentence)
         transcription = self.__split_variables(sentence, mono)
-        for letter in diacritics:
-            transcription.words = [word.replace(letter, diacritics[letter])
+        for key, value in diacritics.items():
+            transcription.words = [word.replace(key, value)
                                    for word in transcription.words]
-            transcription.syllables = [syllable.replace(letter, diacritics[letter])
+            transcription.syllables = [syllable.replace(key, value)
                                        for syllable in transcription.syllables]
         return transcription
 
@@ -152,8 +152,8 @@ class Transcription:
                       'n-k': 'ŋ-k', 'n-ˈk': 'ŋ-ˈk', 'n-g': 'ŋ-g', 'n-ˈg': 'ŋ-ˈg',
                       'n-x': 'ŋ-x', 'n-ˈx': 'ŋ-ˈx'}
         if any(allophone in words for allophone in allophones):
-            for allophone in allophones:
-                words = words.replace(allophone, allophones[allophone])
+            for key, value in allophones.items():
+                words = words.replace(key, value)
         return words.replace('-', ' ').split()
 
     @staticmethod
@@ -162,9 +162,9 @@ class Transcription:
         transliteration = {'β': 'B', 'ð': 'D', 'ɣ': 'G', 'ʎ': 'L', 'r': 'rr',
                            'ɾ': 'r', 'ɱ': 'M', 'ŋ': 'N', 'ɲ': 'J', 'ʧ': 'tS',
                            'ʝ': 'y', 'χ': '4', 'θ': 'T', 'ˈ': sampastr, 'ˌ': '%'}
-        for symbol in transliteration:
+        for key, value in transliteration.items():
             for idx, word in enumerate(ipa.words):
-                ipa.words[idx] = word.replace(symbol, transliteration[symbol])
+                ipa.words[idx] = word.replace(key, value)
             for idx, syllable in enumerate(ipa.syllables):
-                ipa.syllables[idx] = syllable.replace(symbol, transliteration[symbol])
+                ipa.syllables[idx] = syllable.replace(key, value)
         return ipa
