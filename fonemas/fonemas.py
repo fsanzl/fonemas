@@ -106,9 +106,7 @@ class Transcription:
                     syllables = syllables + ['ˈmen', 'te']
                     stress = -2
             else:
-                print('word', word)
                 syllabification = Syllabification(word, True, True)
-                print('syllables', syllabification.syllables)
                 syllables = syllabification.syllables
                 stress = syllabification.stress
             syllables = self.__diphthongs(word, syllables)
