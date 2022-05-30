@@ -81,8 +81,8 @@ class Transcription:
         if 'g' in sentence:
             for reg in [[r'g([eiéíiëï])', rf'x\1'], [r'g[u]([eiéíëï])', rf'g\1']]:
                 sentence = re.sub(reg[0], reg[1], sentence)
-            sentence = re.sub(r'gü([ei])', r'gw\1', sentence)
-            sentence = re.sub(r'gu([ao])', r'gw\1', sentence)
+            sentence = re.sub(r'gü([ei])', r'gw\1', sentence, re.IGNORECASE)
+            sentence = re.sub(r'gu([ao])', r'gw\1', sentence, re.IGNORECASE)
         transcription = self.__split_variables(sentence, mono)
         for key, value in diacritics.items():
             transcription.words = [word.replace(key, value)
@@ -106,7 +106,9 @@ class Transcription:
                     syllables = syllables + ['ˈmen', 'te']
                     stress = -2
             else:
+                print('word', word)
                 syllabification = Syllabification(word, True, True)
+                print('syllables', syllabification.syllables)
                 syllables = syllabification.syllables
                 stress = syllabification.stress
             syllables = self.__diphthongs(word, syllables)
