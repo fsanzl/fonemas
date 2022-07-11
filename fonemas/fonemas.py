@@ -1,7 +1,7 @@
 import re
 from silabeador import Syllabification
 from dataclasses import dataclass, replace
-
+import sys
 
 @dataclass
 class Values:
@@ -50,7 +50,7 @@ class Transcription:
     def make_rehash(sentence):
         vowels = 'aeioujwăĕŏ'
         for idx, syllable in enumerate(sentence):
-            if idx > 0:
+            if idx > 0 and len(syllable) > 1:
                 if syllable[0].lower() in vowels and sentence[idx-1][-1].lower() not in vowels:
                     sentence[idx] = sentence[idx -1][-1] + syllable
                     sentence[idx -1] = sentence[idx -1][:-1]
@@ -81,8 +81,8 @@ class Transcription:
         if 'g' in sentence:
             for reg in [[r'g([eiéíiëï])', rf'x\1'], [r'g[u]([eiéíëï])', rf'g\1']]:
                 sentence = re.sub(reg[0], reg[1], sentence)
-            sentence = re.sub(r'gü([ei])', r'gw\1', sentence, re.IGNORECASE)
-            sentence = re.sub(r'gu([ao])', r'gw\1', sentence, re.IGNORECASE)
+            sentence = re.sub(r'gü([eiéí])', r'gw\1', sentence, re.IGNORECASE)
+            sentence = re.sub(r'gu([aoáó])', r'gw\1', sentence, re.IGNORECASE)
         transcription = self.__split_variables(sentence, mono)
         for key, value in diacritics.items():
             transcription.words = [word.replace(key, value)
@@ -109,7 +109,7 @@ class Transcription:
                 syllabification = Syllabification(word, True, True)
                 syllables = syllabification.syllables
                 stress = syllabification.stress
-            syllables = self.__diphthongs(word, syllables)
+            syllables = self.__diphthongs(syllables)
             syllables[stress] = f'ˈ{syllables[stress]}'
             word = ''
             for syllable in syllables:
@@ -120,7 +120,7 @@ class Transcription:
             words.append(word)
         return Values(words, syllables_sentence)
 
-    def __diphthongs(self, word, syllables):
+    def __diphthongs(self, syllables):
         for idx, syllable in enumerate(syllables):
             if re.search(r'[aeiouáéó][ui]', syllable):
                 syllable = re.sub(r'([aeouáéó])i', r'\1j', syllable)
