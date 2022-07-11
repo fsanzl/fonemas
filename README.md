@@ -65,7 +65,9 @@ The transcription is done according to the Spanish phonology and phonotactics de
 
 ## Known issues
 
-The phonetic transcription lacks allophones represented in IPA with diacritics. They require double characters, which need a workaround to be evaluated. It can be solved using hacks for 'special cases', which I will do if can't figure out a general solution.
+The phonetic transcription lacks allophones represented in IPA with diacritics. They require double characters, which need a workaround to be evaluated. It can be solved using hacks for 'special cases', which I will do until figure out a general solution.
+
+Non-Spanish languages with different prosodic rules but same spelling will cause problems, e.g.(lat.  'amor', 'amabor', 'amabar', 'amer' vs sp. 'amor'. 'labor', 'acabar', 'temer').
 
 ## Contributions
 
