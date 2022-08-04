@@ -72,6 +72,7 @@ class Transcription:
                 sentence = sentence.replace(consonant, consonants[consonant])
         if 'y' in sentence:
             sentence = re.sub(r'\by\b', 'i', sentence)
+            sentence = re.sub(r'uy\b', 'wi', sentence)
             sentence = re.sub(r'y\b', 'j', sentence)
             sentence = sentence.replace('y', 'ʝ')
             for key, value in diacritics.items():
