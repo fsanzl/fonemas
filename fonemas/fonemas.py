@@ -10,9 +10,10 @@ class Values:
 
 
 class Transcription:
-    def __init__(self, sentence, mono = False, epenthesis = False,
+    def __init__(self, sentence, mono = False, exceptions = 1, epenthesis = False,
                  aspiration = False, rehash = False, stress = '"'):
         self.sentence = self.__clean(sentence, epenthesis)
+        self.__exceptions = exceptions
         if rehash:
             self.sentence = self.make_rehash(sentence)
         self.phonology = self.transcription_fnl(self.sentence, mono, aspiration)
@@ -97,7 +98,10 @@ class Transcription:
         syllables_sentence = []
         for word in sentence.split():
             if len(word) > 5 and word.endswith('mente'):
-                syllabification = Syllabification(word[:-5], True, True)
+                syllabification = Syllabification(word=word[:-5],
+                                                  exceptions=self.__exceptions,
+                                                  ipa=True,
+                                                  h=True)
                 syllables = syllabification.syllables
                 if len(syllables) > 1:
                     syllables = syllables + ['ˌmen', 'te']
@@ -107,7 +111,10 @@ class Transcription:
                     syllables = syllables + ['ˈmen', 'te']
                     stress = -2
             else:
-                syllabification = Syllabification(word, True, True)
+                syllabification = Syllabification(word,
+                                                  exceptions=self.__exceptions,
+                                                  ipa=True,
+                                                  h=True)
                 syllables = syllabification.syllables
                 stress = syllabification.stress
             syllables = self.__diphthongs(syllables)
