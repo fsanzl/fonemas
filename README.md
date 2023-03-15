@@ -1,5 +1,5 @@
 [![License: LGPL](https://img.shields.io/github/license/fsanzl/fonemas)](https://opensource.org/licenses/LGPL-2.1)
-[![Version: 2.0.16](https://img.shields.io/github/v/release/fsanzl/fonemas)](https://pypi.org/project/fonemas/)
+[![Version: 2.0.17](https://img.shields.io/github/v/release/fsanzl/fonemas)](https://pypi.org/project/fonemas/)
 [![Python versions: 3.5, 3.6, 3.7, 3.8, 3.9](https://img.shields.io/pypi/pyversions/fonemas)](https://www.python.org/downloads/release/python-390/)
 
 
@@ -75,9 +75,13 @@ Feel free to contribute using the [GitHub Issue Tracker](https://github.com/fsan
 
 ## Changelog
 
+* 2.0.17
+
+** hie -> ʝe
+
 * 2.0.16
 
-Isolated consonants
+** Isolated consonants
 
 ## Licence
 
