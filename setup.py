@@ -39,9 +39,4 @@ setup(
     packages=['fonemas'],
     install_requires=['silabeador'],
     include_package_data=True,
-    entry_points={
-        'console_scripts': [
-            'fonemas=fonemas.__main__:main',
-        ]
-    },
 )
