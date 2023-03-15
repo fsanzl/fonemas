@@ -75,7 +75,7 @@ class Transcription:
                       'j': 'x', 'r': 'ɾ', 'R': 'r', 'ce': 'θe', 'cé': 'θé',
                       'cë': 'θë', 'ci': 'θi', 'cí': 'θí', 'cï': 'θï',
                       'cj': 'θj', 'ch': 'ʧ', 'c': 'k', 'qu': 'k', 'll': 'ʎ',
-                      'ph': 'f', 'hie': 'ʝ', 'h': ''}
+                      'ph': 'f', 'hie': 'ʝe', 'h': ''}
         sentence = re.sub(r'(?:([nls])r|\br|rr)', r'\1R', sentence)
         if aspiration:
             sentence = re.sub(r'\bh', 'ʰ', sentence)
