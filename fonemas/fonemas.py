@@ -142,12 +142,12 @@ class Transcription:
 
     def __diphthongs(self, syllables):
         for idx, syllable in enumerate(syllables):
-            if re.search(r'[aeiouáéó][ui]', syllable):
-                syllable = re.sub(r'([aeouáéó])i', r'\1j', syllable)
+            if re.search(r'[aeioáéó][ui]', syllable):
+                syllable = re.sub(r'([aeoáéó])i', r'\1j', syllable)
                 syllable = re.sub(r'([aeioáéó])u', r'\1w', syllable)
             if re.search(r'[ui][aeiouáéó]', syllable):
                 syllable = re.sub(r'i([aeoáéó])', r'j\1', syllable)
-                syllable = re.sub(r'u([aeoáéó])', r'w\1', syllable)
+                syllable = re.sub(r'u([aeoiáéó])', r'w\1', syllable)
             syllables[idx] = syllable
         return syllables
 
