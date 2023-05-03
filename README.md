@@ -77,15 +77,15 @@ Feel free to contribute using the [GitHub Issue Tracker](https://github.com/fsan
 
 * 2.0.18
 
-** Soved diphthongs contradicting the perceptibility scale.
+    * Solved diphthongs contradicting the perceptibility scale.
 
 * 2.0.17
 
-** hie -> ʝe
+    * hie -> ʝe
 
 * 2.0.16
 
-** Isolated consonants
+    * Isolated consonants
 
 ## Licence
 
