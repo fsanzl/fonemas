@@ -87,6 +87,20 @@ Feel free to contribute using the [GitHub Issue Tracker](https://github.com/fsan
 
     * Isolated consonants
 
+## How to cite *fonemas*
+
+Authors of scientific papers including results generated using *fonemas* are encouraged to cite the following paper.
+
+```xml
+@article{SanzLazaroF_RHD2023, 
+    author    = {Sanz-Lázaro, Fernando},
+    title     = {Del fonema al verso: una caja de herramientas digitales de escansión teatral},
+    volume    = {8},
+    pubstate  = {inpress},
+    journal   = {Revista de Humanidades Digitales},
+}
+```
+
 ## Copyright
 
 Copyright (C) 2022  Fernando Sanz-Lázaro <<fsanzl@gmail.com>>
