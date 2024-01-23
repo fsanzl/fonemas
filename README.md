@@ -91,7 +91,7 @@ Feel free to contribute using the [GitHub Issue Tracker](https://github.com/fsan
 
 Authors of scientific papers including results generated using *fonemas* are encouraged to cite the following paper.
 
-```xml
+```bibtex
 @article{SanzLazaroF_RHD2023, 
     author    = {Sanz-Lázaro, Fernando},
     title     = {Del fonema al verso: una caja de herramientas digitales de escansión teatral},
