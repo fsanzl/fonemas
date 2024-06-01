@@ -75,6 +75,9 @@ Feel free to contribute using the [GitHub Issue Tracker](https://github.com/fsan
 
 ## Changelog
 
+* 2.0.19
+    * Solved stops/affricates alternance after space, hyphen, stress mark, beginning of line.
+
 * 2.0.18
 
     * Solved diphthongs contradicting the perceptibility scale.
@@ -96,9 +99,11 @@ Authors of scientific papers including results generated using *fonemas* are enc
     author    = {Sanz-Lázaro, Fernando},
     title     = {Del fonema al verso: una caja de herramientas digitales de escansión teatral},
     volume    = {8},
-    pubstate  = {inpress},
     journal   = {Revista de Humanidades Digitales},
-}
+    doi       = {https://doi.org/10.5944/rhd.vol.8.2023.37830},
+    pages     = {74--89},
+    langid    = {Spanish},
+}                                                                                                                                                              
 ```
 
 ## Copyright
