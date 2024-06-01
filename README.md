@@ -1,5 +1,5 @@
 [![License: LGPL](https://img.shields.io/github/license/fsanzl/fonemas)](https://opensource.org/licenses/LGPL-2.1)
-[![Version: 2.0.18](https://img.shields.io/github/v/release/fsanzl/fonemas)](https://pypi.org/project/fonemas/)
+[![Version: 2.0.19](https://img.shields.io/github/v/release/fsanzl/fonemas)](https://pypi.org/project/fonemas/)
 [![Python versions: 3.5, 3.6, 3.7, 3.8, 3.9](https://img.shields.io/pypi/pyversions/fonemas)](https://www.python.org/downloads/release/python-390/)
 
 
@@ -43,8 +43,8 @@ The class *transcription()* has three dataclass attributes, each with two attrib
 
 
 ```python
->>> from fonemas import transcription
->>> object = transcription('Averigüéis')
+>>> from fonemas import Transcription
+>>> object = Transcription('Averigüéis')
 >>> a.phonology.words
 ['abeɾiˈgwejs']
 >>> a.phonology.syllables

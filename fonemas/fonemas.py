@@ -158,13 +158,13 @@ class Transcription:
 
     @staticmethod
     def __fsubstitute(words):
-        words = words.replace('b', 'β').replace('d', 'ð').replace('g', 'ɣ')
-        words = re.sub(r'([mnɲ ^])(\-*)β', r'\1\2b', words)
-        words = re.sub(r'([mnɲlʎ ^])(\-*)ð', r'\1\2d', words)
-        words = re.sub(r'([mnɲ ^])(\-*)ɣ', r'\1\2g', words)
-        words = re.sub(r'θ(\-*)([bdgβðɣmnɲlʎrɾ])', r'ð\1\2', words)
-        words = re.sub(r's(\-*)([bdgβðɣmnɲlʎrɾ])', r'z\1\2', words)
-        words = re.sub(r'f(\-*)([bdgβðɣmnɲʎ])', r'v\1\2', words)
+        print(words)
+        allophones = {'b': 'β', 'd': 'ð', 'g': 'ɣ'}
+        for allo in allophones.keys():
+            words = re.sub(rf'^([^mnɲ]+[\-\sˈ]*){allo}', rf'\1{allophones[allo]}', words)
+        words = re.sub(r'θ(\s\-*)([bdgβðɣmnɲlʎrɾ])', r'ð\1\2', words)
+        words = re.sub(r's(\s\-*)([bdgβðɣmnɲlʎrɾ])', r'z\1\2', words)
+        words = re.sub(r'f(\s\-*)([bdgβðɣmnɲʎ])', r'v\1\2', words)
         allophones = {'nb': 'mb', 'nˈb': 'mˈb', 'nf': 'ɱf', 'nˈf': 'ɱˈf',
                       'nk': 'ŋk', 'nˈk': 'ŋˈk', 'ng': 'ŋg', 'nˈg': 'ŋˈg',
                       'nx': 'ŋx', 'nˈx': 'ŋˈx', 'xu': 'χu', 'xo': 'χo',
