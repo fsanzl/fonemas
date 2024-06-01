@@ -161,10 +161,11 @@ class Transcription:
         print(words)
         allophones = {'b': 'β', 'd': 'ð', 'g': 'ɣ'}
         for allo in allophones.keys():
-            words = re.sub(rf'^([^mnɲ]+[\-\sˈ]*){allo}', rf'\1{allophones[allo]}', words)
-        words = re.sub(r'θ(\s\-*)([bdgβðɣmnɲlʎrɾ])', r'ð\1\2', words)
-        words = re.sub(r's(\s\-*)([bdgβðɣmnɲlʎrɾ])', r'z\1\2', words)
-        words = re.sub(r'f(\s\-*)([bdgβðɣmnɲʎ])', r'v\1\2', words)
+            regex = re.compile(r'([^mnɲ\n\-\sˈ][\-\sˈ]{,1})' + allo)
+            words = re.sub(regex, rf'\1{allophones[allo]}', words)
+        words = re.sub(r'θ([\s\-ˈ]*)([bdgβðɣmnɲlʎrɾ])', r'ð\1\2', words)
+        words = re.sub(r's([\s\-ˈ]*)([bdgβðɣmnɲlʎrɾ])', r'z\1\2', words)
+        words = re.sub(r'f([\s\-ˈ]*)([bdgβðɣmnɲʎ])', r'v\1\2', words)
         allophones = {'nb': 'mb', 'nˈb': 'mˈb', 'nf': 'ɱf', 'nˈf': 'ɱˈf',
                       'nk': 'ŋk', 'nˈk': 'ŋˈk', 'ng': 'ŋg', 'nˈg': 'ŋˈg',
                       'nx': 'ŋx', 'nˈx': 'ŋˈx', 'xu': 'χu', 'xo': 'χo',
