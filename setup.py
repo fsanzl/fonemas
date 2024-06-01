@@ -13,7 +13,7 @@ install_requires = ['silabeador']
 # This call to setup() does all the work
 setup(
     name='fonemas',
-    version='2.0.18',
+    version='2.0.19',
     python_requires='>=3.5',
     description='Phonetic transcription of Spanish',
     long_description=README,
@@ -29,11 +29,12 @@ setup(
     classifiers=[
         'License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.5',
         'Natural Language :: Spanish',
     ],
     packages=['fonemas'],
