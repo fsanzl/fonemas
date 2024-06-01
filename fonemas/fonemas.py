@@ -161,7 +161,7 @@ class Transcription:
         print(words)
         allophones = {'b': 'β', 'd': 'ð', 'g': 'ɣ'}
         for allo in allophones.keys():
-            regex = re.compile(r'([^mnɲ\n\-\sˈ][\-\sˈ]{,1})' + allo)
+            regex = re.compile(r'([^mnɲ\n\-\sˈ][\-\s]{,1}ˈ{,1})' + allo)
             words = re.sub(regex, rf'\1{allophones[allo]}', words)
         words = re.sub(r'θ([\s\-ˈ]*)([bdgβðɣmnɲlʎrɾ])', r'ð\1\2', words)
         words = re.sub(r's([\s\-ˈ]*)([bdgβðɣmnɲlʎrɾ])', r'z\1\2', words)
