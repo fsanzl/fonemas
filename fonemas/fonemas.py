@@ -166,13 +166,27 @@ class Transcription:
         words = re.sub(r'θ([\s\-ˈ]*)([bdgβðɣmnɲlʎrɾ])', r'ð\1\2', words)
         words = re.sub(r's([\s\-ˈ]*)([bdgβðɣmnɲlʎrɾ])', r'z\1\2', words)
         words = re.sub(r'f([\s\-ˈ]*)([bdgβðɣmnɲʎ])', r'v\1\2', words)
-        allophones = {'nb': 'mb', 'nˈb': 'mˈb', 'nf': 'ɱf', 'nˈf': 'ɱˈf',
-                      'nk': 'ŋk', 'nˈk': 'ŋˈk', 'ng': 'ŋg', 'nˈg': 'ŋˈg',
-                      'nx': 'ŋx', 'nˈx': 'ŋˈx', 'xu': 'χu', 'xo': 'χo',
-                      'xw': 'χw', 'n-b': 'm-b', 'n-ˈb': 'm-ˈb', 'n-f': 'ɱ-f',
-                      'n-ˈf': 'ɱ-ˈf', 'n-k': 'ŋ-k', 'n-ˈk': 'ŋ-ˈk',
-                      'n-g': 'ŋ-g', 'n-ˈg': 'ŋ-ˈg', 'n-x': 'ŋ-x',
-                      'n-ˈx': 'ŋ-ˈx'}
+        allophones = {'nb': 'mb', 'nˈb': 'mˈb',
+                      'n-b': 'm-b', 'n-ˈb': 'm-ˈb',
+                      'np': 'mp', 'nˈp': 'mˈp',
+                      'n-p': 'm-p', 'n-ˈp': 'm-ˈp',
+                      'nf': 'ɱf', 'nˈf': 'ɱˈf',
+                      'n-f': 'ɱ-f', 'n-ˈf': 'ɱ-ˈf',
+                      'nk': 'ŋk', 'nˈk': 'ŋˈk',
+                      'n-k': 'ŋ-k', 'n-ˈk': 'ŋ-ˈk',
+                      'ng': 'ŋg', 'nˈg': 'ŋˈg',
+                      'n-g': 'ŋ-g', 'n-ˈg': 'ŋ-ˈg',
+                      'nx': 'ŋx', 'nˈx': 'ŋˈx',
+                      'n-x': 'ŋ-x', 'n-ˈx': 'ŋ-ˈx',
+                      'nm': 'mm', 'nˈm': 'nˈm',
+                      'n-m': 'm-m', 'n-ˈm': 'n-ˈm',
+                      'xu': 'χu', 'xˈu': 'χˈu',
+                      'x-u': 'χ-u', 'x-ˈu': 'χ-ˈu',
+                      'xo': 'χo', 'xˈo': 'χˈo',
+                      'x-o': 'χ-o', 'x-ˈo': 'χ-ˈo',
+                      'xw': 'χw', 'xˈw': 'χˈw',
+                      'x-w': 'χ-w', 'x-ˈw': 'χ-ˈw'
+                      }
         if any(allophone in words for allophone in allophones):
             for key, value in allophones.items():
                 words = words.replace(key, value)
