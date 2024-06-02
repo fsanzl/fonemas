@@ -1,6 +1,6 @@
 # .github/workflows/release.yml
 on:
-  workflow_dispatch:
+  workflow_dispatch
 
 
 jobs:
