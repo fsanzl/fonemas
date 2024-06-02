@@ -13,8 +13,8 @@ install_requires = ['silabeador']
 # This call to setup() does all the work
 setup(
     name='fonemas',
-    version='2.0.19',
-    python_requires='>=3.5',
+    version='2.0.20',
+    python_requires='>=3.6',
     description='Phonetic transcription of Spanish',
     long_description=README,
     long_description_content_type='text/markdown',
