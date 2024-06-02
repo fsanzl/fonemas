@@ -1,4 +1,4 @@
-# .github/workflows/ci-cd.yml
+# .github/workflows/release.yml
 on:
   workflow_dispatch:
 
