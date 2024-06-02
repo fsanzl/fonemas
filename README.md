@@ -1,5 +1,5 @@
 [![License: LGPL](https://img.shields.io/github/license/fsanzl/fonemas)](https://opensource.org/licenses/LGPL-2.1)
-[![Version: 2.0.19](https://img.shields.io/github/v/release/fsanzl/fonemas)](https://pypi.org/project/fonemas/)
+[![Version: 2.0.20](https://img.shields.io/github/v/release/fsanzl/fonemas)](https://pypi.org/project/fonemas/)
 [![Python versions: 3.5, 3.6, 3.7, 3.8, 3.9](https://img.shields.io/pypi/pyversions/fonemas)](https://www.python.org/downloads/release/python-390/)
 
 
@@ -73,22 +73,6 @@ Non-Spanish languages with different prosodic rules but same spelling will cause
 
 Feel free to contribute using the [GitHub Issue Tracker](https://github.com/fsanzl/fonemas/issues) for feedback, suggestions, or bug reports.
 
-## Changelog
-
-* 2.0.19
-    * Solved stops/affricates alternance after space, hyphen, stress mark, beginning of line.
-
-* 2.0.18
-
-    * Solved diphthongs contradicting the perceptibility scale.
-
-* 2.0.17
-
-    * hie -> ʝe
-
-* 2.0.16
-
-    * Isolated consonants
 
 ## How to cite *fonemas*
 
@@ -105,6 +89,26 @@ Authors of scientific papers including results generated using *fonemas* are enc
     langid    = {Spanish},
 }                                                                                                                                                              
 ```
+
+## Changelog
+
+* 2.0.20
+    * Solved some issues with nasal coarticulation
+
+* 2.0.19
+    * Solved stops/affricates alternance after space, hyphen, stress mark, beginning of line.
+
+* 2.0.18
+
+    * Solved diphthongs contradicting the perceptibility scale.
+
+* 2.0.17
+
+    * hie -> ʝe
+
+* 2.0.16
+
+    * Isolated consonants
 
 ## Copyright
 
