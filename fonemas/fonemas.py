@@ -166,6 +166,7 @@ class Transcription:
         words = re.sub(r'θ([\s\-ˈ]*)([bdgβðɣmnɲlʎrɾ])', r'ð\1\2', words)
         words = re.sub(r's([\s\-ˈ]*)([bdgβðɣmnɲlʎrɾ])', r'z\1\2', words)
         words = re.sub(r'f([\s\-ˈ]*)([bdgβðɣmnɲʎ])', r'v\1\2', words)
+        words = re.sub(r'l([\s\-ˈ]*)([ð])', r'l\1d', words)
         allophones = {'nb': 'mb', 'nˈb': 'mˈb',
                       'n-b': 'm-b', 'n-ˈb': 'm-ˈb',
                       'np': 'mp', 'nˈp': 'mˈp',
