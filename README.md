@@ -1,5 +1,5 @@
 [![License: LGPL](https://img.shields.io/github/license/fsanzl/fonemas)](https://opensource.org/licenses/LGPL-2.1)
-[![Version: 2.0.20](https://img.shields.io/github/v/release/fsanzl/fonemas)](https://pypi.org/project/fonemas/)
+[![Version: 2.0.20-1](https://img.shields.io/github/v/release/fsanzl/fonemas)](https://pypi.org/project/fonemas/)
 [![Python versions: 3.5, 3.6, 3.7, 3.8, 3.9](https://img.shields.io/pypi/pyversions/fonemas)](https://www.python.org/downloads/release/python-390/)
 
 
@@ -91,6 +91,8 @@ Authors of scientific papers including results generated using *fonemas* are enc
 ```
 
 ## Changelog
+* 2.0.20.1
+    * Simplified coarticullations with regex
 
 * 2.0.20
     * Solved some issues with nasal coarticulation
