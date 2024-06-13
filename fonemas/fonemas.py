@@ -59,7 +59,7 @@ class Transcription:
         for idx, syllable in enumerate(sentence):
             if idx > 0 and len(syllable) > 1:
                 if syllable[0].lower() in vowels and \
-                        sentence[idx-1][-1].lower() not in vowels:
+                        sentence[idx - 1][-1].lower() not in vowels:
                     sentence[idx] = sentence[idx - 1][-1] + syllable
                     sentence[idx - 1] = sentence[idx - 1][:-1]
         return sentence
@@ -163,41 +163,20 @@ class Transcription:
         for allo in allophones.keys():
             regex = re.compile(r'([^mnɲ\n\-\sˈ][\-\s]{,1}ˈ{,1})' + allo)
             words = re.sub(regex, rf'\1{allophones[allo]}', words)
-        words = re.sub(r'θ([\s\-ˈ]*)([bdgβðɣmnɲlʎrɾ])', r'ð\1\2', words)
-        words = re.sub(r's([\s\-ˈ]*)([bdgβðɣmnɲlʎrɾ])', r'z\1\2', words)
-        words = re.sub(r'f([\s\-ˈ]*)([bdgβðɣmnɲʎ])', r'v\1\2', words)
-        words = re.sub(r'l([\s\-ˈ]*)([ð])', r'l\1d', words)
-        allophones = {'nb': 'mb', 'nˈb': 'mˈb',
-                      'n-b': 'm-b', 'n-ˈb': 'm-ˈb',
-                      'n b': 'm b', 'n ˈb': 'm ˈb',
-                      'np': 'mp', 'nˈp': 'mˈp',
-                      'n-p': 'm-p', 'n-ˈp': 'm-ˈp',
-                      'n p': 'm p', 'n ˈp': 'm ˈp',
-                      'nf': 'ɱf', 'nˈf': 'ɱˈf',
-                      'n-f': 'ɱ-f', 'n-ˈf': 'ɱ-ˈf',
-                      'n f': 'ɱ f', 'n ˈf': 'ɱ ˈf',
-                      'nk': 'ŋk', 'nˈk': 'ŋˈk',
-                      'n-k': 'ŋ-k', 'n-ˈk': 'ŋ-ˈk',
-                      'n k': 'ŋ k', 'n ˈk': 'ŋ ˈk',
-                      'ng': 'ŋg', 'nˈg': 'ŋˈg',
-                      'n-g': 'ŋ-g', 'n-ˈg': 'ŋ-ˈg',
-                      'n g': 'ŋ g', 'n ˈg': 'ŋ ˈg',
-                      'nx': 'ŋx', 'nˈx': 'ŋˈx',
-                      'n-x': 'ŋ-x', 'n-ˈx': 'ŋ-ˈx',
-                      'n x': 'ŋ x', 'n ˈx': 'ŋ ˈx',
-                      'nm': 'mm', 'nˈm': 'nˈm',
-                      'n-m': 'm-m', 'n-ˈm': 'm-ˈm',
-                      'n m': 'm m', 'n ˈm': 'm ˈm',
-                      'xu': 'χu', 'xˈu': 'χˈu',
-                      'x-u': 'χ-u', 'x-ˈu': 'χ-ˈu',
-                      'xo': 'χo', 'xˈo': 'χˈo',
-                      'x-o': 'χ-o', 'x-ˈo': 'χ-ˈo',
-                      'xw': 'χw', 'xˈw': 'χˈw',
-                      'x-w': 'χ-w', 'x-ˈw': 'χ-ˈw'
-                      }
-        if any(allophone in words for allophone in allophones):
-            for key, value in allophones.items():
-                words = words.replace(key, value)
+        coarticullations = {
+            r'θ([\s\-ˈ]*)([bdgβðɣmnɲlʎrɾ])': r'ð\1\2',
+            r's([\s\-ˈ]*)([bdgβðɣmnɲlʎrɾ])': r'z\1\2',
+            r'f([\s\-ˈ]*)([bdgβðɣmnɲʎ])': r'v\1\2',
+            r'([lmn])([\s\-ˈ]*)ð': r'\1\2d',
+            r'n([\s\-ˈ]*)([bpm])': r'm\1\2',
+            r'n([\s\-ˈ]*)f': r'ɱ\1f',
+            r'n([\s\-ˈ]*)k': r'ŋ\1k',
+            r'n([\s\-ˈ]*)[gɣ]': r'ŋ\1g',
+            r'n([\s\-ˈ]*)x': r'ŋ\1x',
+            r'x([\s\-ˈ]*)(uow)': r'χ\1\2',
+        }
+        for key, value in coarticullations.items():
+            words = re.sub(key, value, words)
         return words.replace('-', ' ').split()
 
     @staticmethod
