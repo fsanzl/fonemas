@@ -158,7 +158,6 @@ class Transcription:
 
     @staticmethod
     def __fsubstitute(words):
-        print(words)
         allophones = {'b': 'β', 'd': 'ð', 'g': 'ɣ'}
         for allo in allophones.keys():
             regex = re.compile(r'([^mnɲ\n\-\sˈ][\-\s]{,1}ˈ{,1})' + allo)
