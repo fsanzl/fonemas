@@ -129,6 +129,14 @@ class Transcription:
             'ph': 'f', 'hie': 'ʝe', 'h': ''
         }
 
+        # Handle 'x' specific cases before replacing 'j'
+        if 'x' in sentence:
+            exceptions_for_x = ['mexico', 'oaxaca', 'texas', 'mexicano', 'mexicana', 'oaxaqueño', 'oaxaqueña', 'texano', 'texano', 'ximena', 'ximenez', 'mexia']
+            for word in sentence.split():
+                if word in exceptions_for_x:
+                    sentence = sentence.replace(word, word.replace('x', 'j'))
+            sentence = re.sub(r'\bx', 's', sentence)
+
         # Apply consonant replacements and handle aspiration
         sentence = re.sub(r'(?:([nls])r|\br|rr)', r'\1R', sentence)
         if aspiration:
