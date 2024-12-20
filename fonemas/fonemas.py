@@ -131,7 +131,7 @@ class Transcription:
 
         # Handle 'x' specific cases before replacing 'j'
         if 'x' in sentence:
-            exceptions_for_x = ['mexico', 'oaxaca', 'texas', 'mexicano', 'mexicana', 'oaxaqueño', 'oaxaqueña', 'texano', 'texano', 'ximena', 'ximenez', 'mexia']
+            exceptions_for_x = ['mexico', 'mexicos', 'oaxaca', 'texas', 'mexicano', 'mexicanos', 'mexicana', 'mexicanas', 'oaxaqueño', 'oaxaqueños', 'oaxaqueña', 'oaxaqueñas', 'texano', 'texanos', 'texana', 'texanas', 'ximena', 'ximenez', 'mexia']
             for word in sentence.split():
                 if word in exceptions_for_x:
                     sentence = sentence.replace(word, word.replace('x', 'j'))
